@@ -8,6 +8,15 @@ import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
 
+import Mongoose from "mongoose"
+
+Mongoose.connect("mongodb://localhost:27017/downtown-shopify-test");
+
+const productSchema = new Mongoose.Schema({
+  title: { type: String, unique: true, required: true }
+}, { strict: false });
+
+const Product = Mongoose.model("products", productSchema);
 const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 
 const STATIC_PATH =
@@ -40,21 +49,18 @@ app.get("/api/products/count", async (_req, res) => {
   const countData = await shopify.api.rest.Product.count({
     session: res.locals.shopify.session,
   });
-  // const productDataAll = await shopify.api.rest.Product.all({
-  //   session: res.locals.shopify.session,
-  // });
-  // console.log("productDataAll", productDataAll)
-
   console.log("countData", countData)
   res.status(200).send(countData);
 });
 
-app.get("/api/products", async (_req, res) => { 
+app.get("/api/products", async (_req, res) => {
   const productDataAll = await shopify.api.rest.Product.all({
     session: res.locals.shopify.session,
   });
   // console.log("productDataAll", productDataAll)
-  res.status(200).send(productDataAll);
+  // Function call
+  const insertResponse = await Product.insertMany(productDataAll.data)
+  res.status(200).send(insertResponse);
 });
 
 app.get("/api/products/create", async (_req, res) => {
