@@ -22,6 +22,7 @@ export function ProductsCard() {
       },
     },
   });
+  // console.log("data",data);
 
   const toastMarkup = toastProps.content && !isRefetchingCount && (
     <Toast {...toastProps} onDismiss={() => setToastProps(emptyToastProps)} />
@@ -32,7 +33,8 @@ export function ProductsCard() {
     const response = await fetch("/api/products/create");
 
     if (response.ok) {
-      await refetchProductCount();
+      let proCount = await refetchProductCount();
+      console.log("proCount", proCount)
       setToastProps({ content: "5 products created!" });
     } else {
       setIsLoading(false);

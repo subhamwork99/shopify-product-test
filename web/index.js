@@ -40,7 +40,21 @@ app.get("/api/products/count", async (_req, res) => {
   const countData = await shopify.api.rest.Product.count({
     session: res.locals.shopify.session,
   });
+  // const productDataAll = await shopify.api.rest.Product.all({
+  //   session: res.locals.shopify.session,
+  // });
+  // console.log("productDataAll", productDataAll)
+
+  console.log("countData", countData)
   res.status(200).send(countData);
+});
+
+app.get("/api/products", async (_req, res) => { 
+  const productDataAll = await shopify.api.rest.Product.all({
+    session: res.locals.shopify.session,
+  });
+  // console.log("productDataAll", productDataAll)
+  res.status(200).send(productDataAll);
 });
 
 app.get("/api/products/create", async (_req, res) => {
