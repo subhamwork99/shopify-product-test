@@ -21,6 +21,11 @@ const shopify = shopifyApp({
     apiVersion: LATEST_API_VERSION,
     restResources,
     billing: undefined, // or replace with billingConfig above to enable example billing
+    apiKey: '7dfcb58ad20282ada95511f64ddd5dd6',
+    apiSecretKey: '3e6fbc8d2ffd1a4e18fd41d5e35ec9d1',
+    scopes: ['write_products'],
+    hostScheme: 'http',
+    hostName: `localhost:3000`,
   },
   auth: {
     path: "/api/auth",

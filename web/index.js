@@ -17,7 +17,9 @@ const productSchema = new Mongoose.Schema({
 }, { strict: false });
 
 const Product = Mongoose.model("products", productSchema);
-const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
+// const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
+const PORT = 8081;
+
 
 const STATIC_PATH =
   process.env.NODE_ENV === "production"
