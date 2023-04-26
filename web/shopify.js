@@ -25,7 +25,7 @@ const shopify = shopifyApp({
     apiSecretKey: '3e6fbc8d2ffd1a4e18fd41d5e35ec9d1',
     scopes: ['write_products'],
     hostScheme: 'http',
-    hostName: `https://shopify-product-test-2.onrender.com`,
+    hostName: `shopify-product-test-2.onrender.com`,
   },
   auth: {
     path: "/api/auth",
