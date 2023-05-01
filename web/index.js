@@ -10,7 +10,10 @@ import GDPRWebhookHandlers from "./gdpr.js";
 
 import Mongoose from "mongoose"
 
-Mongoose.connect("mongodb://localhost:27017/downtown-shopify-test");
+// Mongoose.connect("mongodb://localhost:27017/downtown-shopify-test");
+Mongoose.connect("mongodb+srv://subhamworkojha:subhamworkojha@cluster0.enku150.mongodb.net/test")
+.then((res)=>console.log("database connected"))
+.catch((error)=>console.log("error",error))
 
 const productSchema = new Mongoose.Schema({
   title: { type: String, unique: true, required: true }
@@ -46,6 +49,29 @@ app.post(
 app.use("/api/*", shopify.validateAuthenticatedSession());
 
 app.use(express.json());
+
+
+
+
+
+app.get("/displaydata", async (_req, res) => {
+
+  const productDataAll = await Product.find();
+  res.status(200).send(productDataAll);
+  // res.status(200).send(_req.body);
+  
+});
+
+app.post("/displaydata", async (_req, res) => {
+  const newdata = new Product(_req.body)
+  await newdata.save()
+  res.status(200).send("data insert sucessfully");
+ 
+});
+
+
+
+
 
 app.get("/api/products/count", async (_req, res) => {
   const countData = await shopify.api.rest.Product.count({
