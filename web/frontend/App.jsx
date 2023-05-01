@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import { NavigationMenu } from "@shopify/app-bridge-react";
 import Routes from "./Routes";
+import {Frame, Navigation} from '@shopify/polaris';
 
 import {
   AppBridgeProvider,
@@ -23,6 +24,10 @@ export default function App() {
                 {
                   label: "Page name",
                   destination: "/pagename",
+                },
+                {
+                  label: "Order",
+                  destination: "/order",
                 },
               ]}
             />
