@@ -3,25 +3,31 @@ import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
-
+// const cors = require("cors")
+import cors from "cors"
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
 
 import Mongoose from "mongoose"
 
+const app = express();
+app.use(express.json())
+app.use(cors())
 // Mongoose.connect("mongodb://localhost:27017/downtown-shopify-test");
-Mongoose.connect("mongodb+srv://subhamworkojha:subhamworkojha@cluster0.enku150.mongodb.net/test")
+Mongoose.connect("mongodb+srv://subhamworkojha:subhamworkojha@cluster0.enku150.mongodb.net/shopifyDowntownDemo")
 .then((res)=>console.log("database connected"))
 .catch((error)=>console.log("error",error))
 
 const productSchema = new Mongoose.Schema({
-  title: { type: String, unique: true, required: true }
+  title: { type: String }
 }, { strict: false });
 
 const Product = Mongoose.model("products", productSchema);
 // const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
+
 const PORT = 8081;
+// console.log("PORT",PORT);
 
 
 const STATIC_PATH =
@@ -29,7 +35,7 @@ const STATIC_PATH =
     ? `${process.cwd()}/frontend/dist`
     : `${process.cwd()}/frontend/`;
 
-const app = express();
+
 
 // Set up Shopify authentication and webhook handling
 app.get(shopify.config.auth.path, shopify.auth.begin());
@@ -50,29 +56,6 @@ app.use("/api/*", shopify.validateAuthenticatedSession());
 
 app.use(express.json());
 
-
-
-
-
-app.get("/displaydata", async (_req, res) => {
-
-  const productDataAll = await Product.find();
-  res.status(200).send(productDataAll);
-  // res.status(200).send(_req.body);
-  
-});
-
-app.post("/displaydata", async (_req, res) => {
-  const newdata = new Product(_req.body)
-  await newdata.save()
-  res.status(200).send("data insert sucessfully");
- 
-});
-
-
-
-
-
 app.get("/api/products/count", async (_req, res) => {
   const countData = await shopify.api.rest.Product.count({
     session: res.locals.shopify.session,
@@ -81,14 +64,26 @@ app.get("/api/products/count", async (_req, res) => {
   res.status(200).send(countData);
 });
 
-app.get("/api/products", async (_req, res) => {
+app.get("/api/recommendations",async (_req,res)=> {
+    // const productDataAll = await shopify.api.rest.Product.all({
+    //   session: res.locals.shopify.session,
+    // });
+    console.log("recommendations******************", window.Shopify.routes.root);    
+    res.status(200).send({ message: "success" });
+})
+
+app.get("/api/addProducts", async (_req, res) => {
+  // console.log("addProducts****************")
   const productDataAll = await shopify.api.rest.Product.all({
     session: res.locals.shopify.session,
   });
-  // console.log("productDataAll", productDataAll)
-  // Function call
   const insertResponse = await Product.insertMany(productDataAll.data)
   res.status(200).send(insertResponse);
+});
+
+app.get("/api/products", async (_req, res) => {
+  const productDataAll = await Product.find();
+  res.status(200).send(productDataAll);
 });
 
 app.get("/api/products/create", async (_req, res) => {

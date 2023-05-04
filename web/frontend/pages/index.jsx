@@ -1,88 +1,359 @@
-import {
-  Card,
-  Page,
-  Layout,
-  TextContainer,
-  Image,
-  Stack,
-  Link,
-  Text,
-} from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
+// import { ActionList, AppProvider, Frame, Navigation } from "@shopify/polaris";
+// import { HomeMinor, OrdersMinor, ProductsMinor } from "@shopify/polaris-icons";
+// import React from "react";
+// import Routes from "./../Routes";
+// import AppFrame from "./Routing/AppFrame";
+// import { BrowserRouter } from "react-router-dom";
+// import ReactDOM from "react-dom";
 
-import { trophyImage } from "../assets";
+// export default function HomePage({children}) {
+//   console.log("children",children);
+//   // const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
+//   // const pages = "hii"
 
-import { ProductsCard } from "../components";
+//   return (
 
-export default function HomePage() {
+//       <AppProvider  i18n={{
+//           Polaris: {
+//             Avatar: {
+//               label: 'Avatar',
+//               labelWithInitials: 'Avatar with initials {initials}',
+//             },
+//             ContextualSaveBar: {
+//               save: 'Save',
+//               discard: 'Discard',
+//             },
+//             TextField: {
+//               characterCount: '{count} characters',
+//             },
+//             TopBar: {
+//               toggleMenuLabel: 'Toggle menu',
+
+//               SearchField: {
+//                 clearButtonLabel: 'Clear',
+//                 search: 'Search',
+//               },
+//             },
+//             Modal: {
+//               iFrameTitle: 'body markup',
+//             },
+//             Frame: {
+//               skipToContent: 'Skip to content',
+//               navigationLabel: 'Navigation',
+//               Navigation: {
+//                 closeMobileNavigationLabel: 'Close navigation',
+//               },
+//             },
+//           },
+//         }}>
+//         <AppFrame />
+//       </AppProvider>
+//   );
+// }
+
+// if(document.getElementById("root")){
+//   ReactDOM.render(<HomePage/>,document.getElementById("root"))
+
+// }
+
+import { ActionList, Frame, Navigation, Modal, AppProvider, Loading, FormLayout } from "@shopify/polaris";
+import { HomeMinor, OrdersMinor, ProductsMinor, SettingsMajor } from "@shopify/polaris-icons";
+import React, { useState, useCallback } from "react";
+import Routes from "./../Routes";
+import { Route } from "react-router-dom";
+import Home from './Home';
+import Products from "./products";
+import Order from "./order";
+import Setting from "./setting";
+
+// export default function HomePage({ children }) {
+//   const [modalActive, setModalActive] = useState(false);
+//   const [homePage, setHome]=useState(false);
+//   const [productPage ,setProductPage] = useState(false)
+//   const [orderPage ,setOrderPage] = useState(false)
+//   // console.log("children",children);
+//   // const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
+//   // const pages = import Home from './Home';
+
+//   const toggleModalActive = useCallback(
+//     () => setModalActive((modalActive) => !modalActive),
+//     []
+//   );
+
+//   const homePageOpen = useCallback(
+//     () => setHome((homePage) => !homePage),
+//     []
+//   );
+
+  
+//   const orderPageOpen = useCallback(
+//     () => setOrderPage((orderPage) => !orderPage),
+//     []
+//   );
+
+//   const productPageOpen = useCallback(
+//     () => setProductPage((productPage) => !productPage),
+//     []
+//   );
+
+  
+//   const homePageMarkup = homePage ? <Home /> :"";
+//   const orderPageMarkup = orderPage ? <Order /> : "";
+//   const productPageMarkup = productPage ? <Products /> : "";
+
+  
+
+//   const navigationMarkup = (
+//     <Navigation location="/">
+//       <Navigation.Section
+//         items={[
+//           {
+//             // url: "/Home",
+//             excludePaths: ["#"],
+//             label: "Home",
+//             icon: HomeMinor,
+//             onClick:homePageOpen
+//           },
+//           {
+//             // url: "#",
+//             excludePaths: ["#"],
+//             label: "Orders",
+//             icon: OrdersMinor,
+//             badge: "15",
+//             onClick: orderPageOpen
+//           },
+//           {
+//             // url: "/products",
+//             excludePaths: ["#"],
+//             label: "Products",
+//             icon: ProductsMinor,
+//             onClick: productPageOpen
+//           },
+//         ]}
+//         action={{
+//           // icon: ConversationMinor,
+//           accessibilityLabel: "Contact support",
+//           onClick: toggleModalActive,
+//         }}
+//       />
+
+//       {/* <Routes pages={pages} /> */}
+//     </Navigation>
+//   );
+
+  
+
+  
+
+//   return (
+//     <div style={{height: '500px'}}>
+//     <AppProvider
+//       i18n={{
+//         // Polaris: {
+//         //   Avatar: {
+//         //     label: "Avatar",
+//         //     labelWithInitials: "Avatar with initials {initials}",
+//         //   },
+//         //   ContextualSaveBar: {
+//         //     save: "Save",
+//         //     discard: "Discard",
+//         //   },
+//         //   TextField: {
+//         //     characterCount: "{count} characters",
+//         //   },
+//         //   TopBar: {
+//         //     toggleMenuLabel: "Toggle menu",
+
+//         //     SearchField: {
+//         //       clearButtonLabel: "Clear",
+//         //       search: "Search",
+//         //     },
+//         //   },
+//         //   Modal: {
+//         //     iFrameTitle: "body markup",
+//         //   },
+//         //   Frame: {
+//         //     skipToContent: "Skip to content",
+//         //     navigationLabel: "Navigation",
+//         //     Navigation: {
+//         //       closeMobileNavigationLabel: "Close navigation",
+//         //     },
+//         //   },
+//         // },
+//       }}
+//     >
+//       <Frame navigation={navigationMarkup}>
+//         {homePageMarkup}
+//         {productPageMarkup}
+//         {orderPageMarkup}
+//         {/* <Navigation location="/">
+//         <Navigation.Section
+//           items={[
+//             {
+//               url: "/home",
+//               label: "Home",
+//               icon: HomeMinor,
+//             },
+//             {
+//               url: "#",
+//               excludePaths: ["#"],
+//               label: "Orders",
+//               icon: OrdersMinor,
+//               badge: "15",
+//             },
+//             {
+//               url: "/products",
+//               excludePaths: ["#"],
+//               label: "Products",
+//               icon: ProductsMinor,
+//             },
+//           ]}
+//           // action={{
+//           //   // icon: ConversationMinor,
+//           //   accessibilityLabel: "Contact support",
+//           //   onClick: toggleModalActive
+//           // }}
+//         />
+
+//             {/* <Routes pages={pages} /> */}
+//         {/* </Navigation> */}
+//       </Frame>
+//     </AppProvider>
+//     </div>
+//   );
+// }
+
+
+export default function HomePage({ children }) {
+  const [modalActive, setModalActive] = useState(false);
+  const [homePage, setHome]=useState(false);
+  const [productPage ,setProductPage] = useState(false)
+  // console.log("children",children);
+  // const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
+  // const pages = import Home from './Home';
+
+  const [selectedTab, setSelectedTab] = useState('home');
+  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+
+  const toggleNavigation = useCallback(
+    () => setIsNavigationOpen((isNavigationOpen) => !isNavigationOpen),
+    [],
+  );
+
+
+  
+  const toggleTab = useCallback((tab) => setSelectedTab(tab), []);
+
+  
+
+  const navigationMarkup = (
+    <Navigation location="/">
+      <Navigation.Section
+        items={[
+          {
+            // url: "/Home",
+            excludePaths: ["#"],
+            label: "Home",
+            icon: HomeMinor,
+            selected: selectedTab === 'home',
+            onClick: () => toggleTab('home'),
+          },
+          {
+            // url: "#",
+            excludePaths: ["#"],
+            label: "Orders",
+            icon: OrdersMinor,
+            badge: "15",
+            selected: selectedTab === 'orders',
+            onClick: () => toggleTab('orders'),
+          },
+          {
+            // url: "/products",
+            excludePaths: ["#"],
+            label: "Products",
+            icon: ProductsMinor,
+            selected: selectedTab === 'products',
+            onClick: () => toggleTab('products'),
+          },
+          {
+            
+            // url: "/products",
+            excludePaths: ["#"],
+            label: "Setting",
+            icon: SettingsMajor,
+            selected: selectedTab === 'setting',
+            onClick: () => toggleTab('setting'),
+          },
+        ]}
+        action={{
+          // icon: <Icon source={HomeMajor} />,
+          accessibilityLabel: 'Home',
+          onClick: () => toggleTab('home'),
+        }}
+      />
+
+      {/* <Routes pages={pages} /> */}
+    </Navigation>
+  );
+
+  
+  const renderPage = () => {
+    switch (selectedTab) {
+      case 'home':
+        return <Home />;
+      case 'orders':
+        return <Order />;
+      case 'products':
+        return <Products />;
+      case 'setting':
+        return <Setting/>;
+      default:
+        return <Home />;
+    }
+  };
+  
+
   return (
-    <Page narrowWidth>
-      <TitleBar title="App name" primaryAction={null} />
-      <Layout>
-        <Layout.Section>
-          <Card sectioned>
-            <Stack
-              wrap={false}
-              spacing="extraTight"
-              distribution="trailing"
-              alignment="center"
-            >
-              <Stack.Item fill>
-                <TextContainer spacing="loose">
-                  <Text as="h2" variant="headingMd">
-                    Nice work on building a Shopify app 🎉
-                  </Text>
-                  <p>
-                    Your app is ready to explore! It contains everything you
-                    need to get started including the{" "}
-                    <Link url="https://polaris.shopify.com/" external>
-                      Polaris design system
-                    </Link>
-                    ,{" "}
-                    <Link url="https://shopify.dev/api/admin-graphql" external>
-                      Shopify Admin API
-                    </Link>
-                    , and{" "}
-                    <Link
-                      url="https://shopify.dev/apps/tools/app-bridge"
-                      external
-                    >
-                      App Bridge
-                    </Link>{" "}
-                    UI library and components.
-                  </p>
-                  <p>
-                    Ready to go? Start populating your app with some sample
-                    products to view and test in your store.{" "}
-                  </p>
-                  <p>
-                    Learn more about building out your app in{" "}
-                    <Link
-                      url="https://shopify.dev/apps/getting-started/add-functionality"
-                      external
-                    >
-                      this Shopify tutorial
-                    </Link>{" "}
-                    📚{" "}
-                  </p>
-                </TextContainer>
-              </Stack.Item>
-              <Stack.Item>
-                <div style={{ padding: "0 20px" }}>
-                  <Image
-                    source={trophyImage}
-                    alt="Nice work on building a Shopify app"
-                    width={120}
-                  />
-                </div>
-              </Stack.Item>
-            </Stack>
-          </Card>
-        </Layout.Section>
-        <Layout.Section>
-          <ProductsCard />
-        </Layout.Section>
-      </Layout>
-    </Page>
+    <div style={{height: '500px'}}>
+    <AppProvider
+      i18n={{
+        // Polaris: {
+        //   Avatar: {
+        //     label: "Avatar",
+        //     labelWithInitials: "Avatar with initials {initials}",
+        //   },
+        //   ContextualSaveBar: {
+        //     save: "Save",
+        //     discard: "Discard",
+        //   },
+        //   TextField: {
+        //     characterCount: "{count} characters",
+        //   },
+        //   TopBar: {
+        //     toggleMenuLabel: "Toggle menu",
+
+        //     SearchField: {
+        //       clearButtonLabel: "Clear",
+        //       search: "Search",
+        //     },
+        //   },
+        //   Modal: {
+        //     iFrameTitle: "body markup",
+        //   },
+        //   Frame: {
+        //     skipToContent: "Skip to content",
+        //     navigationLabel: "Navigation",
+        //     Navigation: {
+        //       closeMobileNavigationLabel: "Close navigation",
+        //     },
+        //   },
+        // },
+      }}
+    >
+      <Frame navigation={navigationMarkup}>
+        {renderPage()}
+      </Frame>
+    </AppProvider>
+    </div>
   );
 }

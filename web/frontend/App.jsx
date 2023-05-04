@@ -12,6 +12,7 @@ import {
 export default function App() {
   // Any .tsx or .jsx files in /pages will become a route
   // See documentation for <Routes /> for more info
+  // const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
   const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
 
   return (
@@ -21,10 +22,11 @@ export default function App() {
           <QueryProvider>
             <NavigationMenu
               navigationLinks={[
-                {
-                  label: "Page name",
-                  destination: "/pagename",
-                },
+                // {
+                //   label: "pagename",
+                //   destination: "/pagename",
+                //   destination: "/home",
+                // },
                 {
                   label: "Order",
                   destination: "/order",
@@ -42,3 +44,5 @@ export default function App() {
     </PolarisProvider>
   );
 }
+
+

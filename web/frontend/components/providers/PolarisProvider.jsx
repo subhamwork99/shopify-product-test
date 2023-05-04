@@ -5,6 +5,7 @@ import translations from "@shopify/polaris/locales/en.json";
 import "@shopify/polaris/build/esm/styles.css";
 
 function AppBridgeLink({ url, children, external, ...rest }) {
+
   const navigate = useNavigate();
   const handleClick = useCallback(() => {
     navigate(url);
