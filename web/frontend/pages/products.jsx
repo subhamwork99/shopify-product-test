@@ -9,7 +9,6 @@ function Products() {
     url: "/api/products",
     reactQueryOptions: {
       onSuccess: (reponseData) => {
-        console.log("reponseData", reponseData);
         setProductData(reponseData);
       },
     },

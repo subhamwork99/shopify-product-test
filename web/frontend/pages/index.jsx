@@ -58,13 +58,16 @@
 
 import { ActionList, Frame, Navigation, Modal, AppProvider, Loading, FormLayout } from "@shopify/polaris";
 import { HomeMinor, OrdersMinor, ProductsMinor, SettingsMajor } from "@shopify/polaris-icons";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Routes from "./../Routes";
 import { Route } from "react-router-dom";
 import Home from './Home';
 import Products from "./products";
 import Order from "./order";
 import Setting from "./setting";
+import { useAppQuery, useAuthenticatedFetch } from "../hooks";
+
+
 
 // export default function HomePage({ children }) {
 //   const [modalActive, setModalActive] = useState(false);
@@ -228,12 +231,16 @@ export default function HomePage({ children }) {
   const [modalActive, setModalActive] = useState(false);
   const [homePage, setHome]=useState(false);
   const [productPage ,setProductPage] = useState(false)
+  const [orderCount ,setOrderCount ] = useState("")
   // console.log("children",children);
   // const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
   // const pages = import Home from './Home';
 
   const [selectedTab, setSelectedTab] = useState('home');
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+
+  const fetch = useAuthenticatedFetch();
+
 
   const toggleNavigation = useCallback(
     () => setIsNavigationOpen((isNavigationOpen) => !isNavigationOpen),
@@ -244,7 +251,28 @@ export default function HomePage({ children }) {
   
   const toggleTab = useCallback((tab) => setSelectedTab(tab), []);
 
+  useEffect(()=>{
+    handleOrders()
+  },[])
   
+  // useAppQuery({
+  //   url: "/api/orders/count",
+  //   reactQueryOptions: {
+  //     onSuccess: (reponseData) => {
+  //       console.log("reponseData", reponseData);
+  //       setOrderCount(reponseData);
+  //     },
+  //   },
+  // });
+  // console.log("productData", productData);
+
+  const handleOrders = async() =>{
+    const responseOrderApi = await fetch("/api/orders/count").then((res)=>{
+    })
+
+    await fetch("/api/orders/count")
+    .then((res)=>{return res.json()}).then(data => setOrderCount(data.count))
+  }
 
   const navigationMarkup = (
     <Navigation location="/">
@@ -263,7 +291,7 @@ export default function HomePage({ children }) {
             excludePaths: ["#"],
             label: "Orders",
             icon: OrdersMinor,
-            badge: "15",
+            badge: orderCount,
             selected: selectedTab === 'orders',
             onClick: () => toggleTab('orders'),
           },

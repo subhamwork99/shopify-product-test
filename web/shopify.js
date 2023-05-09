@@ -23,7 +23,8 @@ const shopify = shopifyApp({
     billing: undefined, // or replace with billingConfig above to enable example billing
     apiKey: '7dfcb58ad20282ada95511f64ddd5dd6',
     apiSecretKey: '3e6fbc8d2ffd1a4e18fd41d5e35ec9d1',
-    scopes: ['write_products'],
+    scopes: ['write_products', 'read_orders', 'read_themes', 'write_themes'],
+    // scopes: ['write_products', 'read_themes', 'write_themes'],
     hostScheme: 'https',
     hostName: `shopify-product-test-2.onrender.com`,
   },
