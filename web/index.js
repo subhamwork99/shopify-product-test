@@ -207,7 +207,7 @@ app.get("/api/products", async (_req, res) => {
   res.status(200).send(productDataAll);
 });
 
-app.get("/api/add-releted-theme",async (_req,res)=>{
+app.get("/api/add-related-theme",async (_req,res)=>{
 
   const data = {
     asset: {
@@ -645,7 +645,7 @@ app.get("/api/add-releted-theme",async (_req,res)=>{
   });
 })
 
-app.get("/api/related-product", async (_req, res) => {
+app.get("/related-product", async (_req, res) => {
   try {
     const productDataAll = await Product.aggregate([{ $sample: { size: 5 } }]);
     res.status(200).send(productDataAll);
