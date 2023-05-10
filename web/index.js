@@ -359,6 +359,7 @@ app.get("/related-product", async (_req, res) => {
 
     try {
       const productDataAll = await Product.aggregate([{ $match: query }, { $sample: { size: 5 } }]);
+      
       res.status(200).send(productDataAll);
     } catch (error) {
       res.status(500).send({ message: error.message });
