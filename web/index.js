@@ -10,9 +10,8 @@ import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
 
 import Mongoose from "mongoose"
-import fetch from 'node-fetch';
 import Request from 'request';
-import { request } from "http";
+import fs from 'fs';
 
 const app = express();
 app.use(express.json())
@@ -28,9 +27,8 @@ const productSchema = new Mongoose.Schema({
 
 const Product = Mongoose.model("products", productSchema);
 // const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
-let reletedProduct =[];
 const PORT = 8081;
-console.log("PORT",PORT);
+console.log("PORT", PORT);
 
 
 const STATIC_PATH =
@@ -163,22 +161,6 @@ app.get("/api/recommendations", async (_req, res) => {
   // }
 })
 
-// app.get("/api/users", async (_req, res) => {
-//   const userDetail = await shopify.api.rest.User.all({
-//     session: res.locals.shopify.session,
-//   });
-//   res.status(200).send(userDetail);
-// });
-
-// app.get("/api/orders", async (_req, res) => {
-//   const userOrder = await shopify.api.rest.Order.all({
-//     session: res.locals.shopify.session,
-//     status: "any",
-//   });
-//   console.log("userOrder",userOrder);
-//   res.status(200).send(userOrder);
-// });
-
 app.get("/api/orders/count", async (_req, res) => {
   try {
     const orderResponse = await shopify.api.rest.Order.count({
@@ -202,458 +184,192 @@ app.get("/api/addProducts", async (_req, res) => {
   res.status(200).send(insertResponse);
 });
 
+app.get("/api/handle", async (_req, res) => {
+  try {
+    const product = await shopify.product.get({ handle: req.params.handle });
+    const data = await client.query({
+      data: {
+        query: `query getProductIdFromHandle($handle: String!) {
+          productByHandle(handle: $handle) {
+            id
+          }
+        }`,
+        variables: {
+          handle: 'element',
+        },
+      },
+    });
+
+    res.json({
+      success: true,
+      productId: data.productByHandle.id,
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 app.get("/api/products", async (_req, res) => {
   const productDataAll = await Product.find();
   res.status(200).send(productDataAll);
 });
 
-app.get("/api/add-related-theme",async (_req,res)=>{
-
-  const data = {
-    asset: {
-      key: 'sections/related-products.liquid',
-      value: `
-      <div class="related">
-      <div class="width">
-        <h2 class="main-heading">{{ section.settings.heading }}</h2>      
-        <div class="related-products">
+app.get("/api/add-related-theme", async (_req, res) => {
+  fs.readFile('./theme-assets.html', 'utf8', function (err, HtmlData) {
+    console.log("data", HtmlData);
+    const data = {
+      asset: {
+        key: 'sections/related-products.liquid',
+        value: `<div class="related">
+        <div class="width">
+          <h2 class="main-heading">{{ section.settings.heading }}</h2>
+      
+          <div class="related-products">
+          </div>
         </div>
       </div>
-    </div>      
-    <script>
-    function buildBlock(product) {
-      const html = 
-        <a class="related-product" href="${product.url}">
-          <img src="${product.images[0]}" />
-          <h3>${product.title}</h3>
-          <span></span>
-          <form method="post" action="/cart/add">
-            <input name="id" type="hidden" value="${product.variants[0].id}" />
-            <button type="submit">Add to cart</button>
-          </form>
-        </a>
       
-      return html
-    }
-      function getData(){
-        products = [
-      {
-        "_id": "6452364372715734518f56d5",
-        "title": "bitter rain",
-        "body_html": null,
-        "vendor": "test-downtown",
-        "product_type": "",
-        "created_at": "2023-04-24T05:47:36-04:00",
-        "handle": "bitter-rain",
-        "updated_at": "2023-04-24T05:47:36-04:00",
-        "published_at": null,
-        "template_suffix": null,
-        "status": "active",
-        "published_scope": "web",
-        "tags": "",
-        "admin_graphql_api_id": "gid://shopify/Product/8233973907740",
-        "variants": [
-          {
-            "id": 44998367478044,
-            "product_id": 8233973907740,
-            "title": "Default Title",
-            "price": "5.73",
-            "sku": "",
-            "position": 1,
-            "inventory_policy": "deny",
-            "compare_at_price": null,
-            "fulfillment_service": "manual",
-            "inventory_management": null,
-            "option1": "Default Title",
-            "option2": null,
-            "option3": null,
-            "created_at": "2023-04-24T05:47:36-04:00", 
-            "updated_at": "2023-04-24T05:47:36-04:00",
-            "taxable": true,
-            "barcode": null,
-            "grams": 0,
-            "image_id": null,
-            "weight": 0,
-            "weight_unit": "kg",
-            "inventory_item_id": 47046867026204,
-            "inventory_quantity": 0,
-            "old_inventory_quantity": 0,
-            "requires_shipping": true,
-            "admin_graphql_api_id": "gid://shopify/ProductVariant/44998367478044"
-          }
-        ],
-        "options": [
-          {
-            "id": 10443198562588,
-            "product_id": 8233973907740,
-            "name": "Title",
-            "position": 1,
-            "values": [
-              "Default Title"
-            ]
-          }
-        ],
-        "images": [],
-        "image": null,
-        "__v": 0
-      },
-      {
-        "_id": "6452364372715734518f56e3",
-        "title": "cold meadow",
-        "body_html": null,
-        "vendor": "test-downtown",
-        "product_type": "",
-        "created_at": "2023-04-24T06:25:07-04:00",
-        "handle": "cold-meadow",
-        "updated_at": "2023-04-24T06:25:08-04:00",
-        "published_at": null,
-        "template_suffix": null,
-        "status": "active",
-        "published_scope": "web",
-        "tags": "",
-        "admin_graphql_api_id": "gid://shopify/Product/8233991766300",
-        "variants": [
-          {
-            "id": 44998458933532,
-            "product_id": 8233991766300,
-            "title": "Default Title",
-            "price": "3.19",
-            "sku": "",
-            "position": 1,
-            "inventory_policy": "deny",
-            "compare_at_price": null,
-            "fulfillment_service": "manual",
-            "inventory_management": null,
-            "option1": "Default Title",
-            "option2": null,
-            "option3": null,
-            "created_at": "2023-04-24T06:25:07-04:00",
-            "updated_at": "2023-04-24T06:25:07-04:00",
-            "taxable": true,
-            "barcode": null,
-            "grams": 0,
-            "image_id": null,
-            "weight": 0,
-            "weight_unit": "kg",
-            "inventory_item_id": 47046958547228,
-            "inventory_quantity": 0,
-            "old_inventory_quantity": 0,
-            "requires_shipping": true,
-            "admin_graphql_api_id": "gid://shopify/ProductVariant/44998458933532"
-          }
-        ],
-        "options": [
-          {
-            "id": 10443220975900,
-            "product_id": 8233991766300,
-            "name": "Title",
-            "position": 1,
-            "values": [
-              "Default Title"
-            ]
-          }
-        ],
-        "images": [],
-        "image": null,
-        "__v": 0
-      },
-      {
-        "_id": "6452366472715734518f5705",
-        "title": "autumn sunset",
-        "body_html": null,
-        "vendor": "test-downtown",
-        "product_type": "",
-        "created_at": "2023-04-19T03:29:08-04:00",
-        "handle": "autumn-sunset",
-        "updated_at": "2023-04-19T03:29:08-04:00",
-        "published_at": null,
-        "template_suffix": null,
-        "status": "active",
-        "published_scope": "web",
-        "tags": "",
-        "admin_graphql_api_id": "gid://shopify/Product/8224462864668",
-        "variants": [
-          {
-            "id": 44967267598620,
-            "product_id": 8224462864668,
-            "title": "Default Title",
-            "price": "2.86",
-            "sku": "",
-            "position": 1,
-            "inventory_policy": "deny",
-            "compare_at_price": null,
-            "fulfillment_service": "manual",
-            "inventory_management": null,
-            "option1": "Default Title",
-            "option2": null,
-            "option3": null,
-            "created_at": "2023-04-19T03:29:08-04:00",
-            "updated_at": "2023-04-19T03:29:08-04:00",
-            "taxable": true,
-            "barcode": null,
-            "grams": 0,
-            "image_id": null,
-            "weight": 0,
-            "weight_unit": "kg",
-            "inventory_item_id": 47015768228124,
-            "inventory_quantity": 0,
-            "old_inventory_quantity": 0,
-            "requires_shipping": true,
-            "admin_graphql_api_id": "gid://shopify/ProductVariant/44967267598620"
-          }
-        ],
-        "options": [
-          {
-            "id": 10432269746460,
-            "product_id": 8224462864668,
-            "name": "Title",
-            "position": 1,
-            "values": [
-              "Default Title"
-            ]
-          }
-        ],
-        "images": [],
-        "image": null,
-        "__v": 0
-      },
-      {
-        "_id": "6452364372715734518f56d8",
-        "title": "broken brook",
-        "body_html": null,
-        "vendor": "test-downtown",
-        "product_type": "",
-        "created_at": "2023-04-24T06:17:11-04:00",
-        "handle": "broken-brook",
-        "updated_at": "2023-04-24T06:17:11-04:00",
-        "published_at": null,
-        "template_suffix": null,
-        "status": "active",
-        "published_scope": "web",
-        "tags": "",
-        "admin_graphql_api_id": "gid://shopify/Product/8233986982172",
-        "variants": [
-          {
-            "id": 44998441369884,
-            "product_id": 8233986982172,
-            "title": "Default Title",
-            "price": "2.01",
-            "sku": "",
-            "position": 1,
-            "inventory_policy": "deny",
-            "compare_at_price": null,
-            "fulfillment_service": "manual",
-            "inventory_management": null,
-            "option1": "Default Title",
-            "option2": null,
-            "option3": null,
-            "created_at": "2023-04-24T06:17:11-04:00",
-            "updated_at": "2023-04-24T06:17:11-04:00",
-            "taxable": true,
-            "barcode": null,
-            "grams": 0,
-            "image_id": null,
-            "weight": 0,
-            "weight_unit": "kg",
-            "inventory_item_id": 47046940983580,
-            "inventory_quantity": 0,
-            "old_inventory_quantity": 0,
-            "requires_shipping": true,
-            "admin_graphql_api_id": "gid://shopify/ProductVariant/44998441369884"
-          }
-        ],
-        "options": [
-          {
-            "id": 10443214291228,
-            "product_id": 8233986982172,
-            "name": "Title",
-            "position": 1,
-            "values": [
-              "Default Title"
-            ]
-          }
-        ],
-        "images": [],
-        "image": null,
-        "__v": 0
-      },
-      {
-        "_id": "645235e772715734518f56ab",
-        "title": "cold bush",
-        "body_html": null,
-        "vendor": "test-downtown",
-        "product_type": "",
-        "created_at": "2023-04-24T06:26:12-04:00",
-        "handle": "cold-bush",
-        "updated_at": "2023-04-24T06:26:12-04:00",
-        "published_at": null,
-        "template_suffix": null,
-        "status": "active",
-        "published_scope": "web",
-        "tags": "",
-        "admin_graphql_api_id": "gid://shopify/Product/8233992519964",
-        "variants": [
-          {
-            "id": 44998461161756,
-            "product_id": 8233992519964,
-            "title": "Default Title",
-            "price": "0.61",
-            "sku": "",
-            "position": 1,
-            "inventory_policy": "deny",
-            "compare_at_price": null,
-            "fulfillment_service": "manual",
-            "inventory_management": null,
-            "option1": "Default Title",
-            "option2": null,
-            "option3": null,
-            "created_at": "2023-04-24T06:26:12-04:00",
-            "updated_at": "2023-04-24T06:26:12-04:00",
-            "taxable": true,
-            "barcode": null,
-            "grams": 0,
-            "image_id": null,
-            "weight": 0,
-            "weight_unit": "kg",
-            "inventory_item_id": 47046960775452,
-            "inventory_quantity": 0,
-            "old_inventory_quantity": 0,
-            "requires_shipping": true,
-            "admin_graphql_api_id": "gid://shopify/ProductVariant/44998461161756"
-          }
-        ],
-        "options": [
-          {
-            "id": 10443221991708,
-            "product_id": 8233992519964,
-            "name": "Title",
-            "position": 1,
-            "values": [
-              "Default Title"
-            ]
-          }
-        ],
-        "images": [],
-        "image": null,
-        "__v": 0
+      <script>
+      function buildBlock(product) {
+        console.log("buildBlock", product)
+        const html =${HtmlData} 
+        return html
       }
-    ]
-        console.log("products", products)
-        products.forEach(product => {
-          const html = buildBlock(product)
-          document.querySelector('.related-products').innerHTML += html
-        })
-        console.log(products)
-      }        
-      getData();
-    </script>
-    <style>
-      .main-heading{
-            display: flex;
-        justify-content: center;
-        font-size: 2.5rem;
-        font-weight: 600;
+        function getData(){
+          fetch('https://shopify-product-test-2.onrender.com/related-product')
+            .then(response => response.json())
+            .then(products => {
+              console.log("products", products)
+              products && products.forEach(product => {
+                const html = buildBlock(product)
+                document.querySelector('.related-products').innerHTML += html
+              })
+            })
+        }        
+        getData();
+      </script>
+      <style>
+        .main-heading{
+              display: flex;
+          justify-content: center;
+          font-size: 2.5rem;
+          font-weight: 600;
+        }
+      .related-products {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
       }
-    .related-products {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    
-    .related-product {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 33%;
-      margin-bottom: 30px;
-    }
-    
-    .related-product img {
-      max-width: 100%;
-      margin-bottom: 10px;
-      height:330px;
-      max-height:300px;
-    }
-    
-    .related-product h3 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-    
-    .related-product span {
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-    
-    .related-product form {
-      display: flex;
-      align-items: center;
-    }
-    
-    .related-product button {
-      background-color: #000;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 0;
-      text-transform: uppercase;
-      font-weight: bold;
-      cursor: pointer;
-    }
       
-    </style>
-    {% schema %}
-    {
-      "name": "Related products",
-      "settings": [
-        {
-          "type": "text",
-          "label": "Heading",
-          "id": "heading",
-          "default": "You may also like"
-        }
-      ],
-      "presets": [
-        {
-          "name": "Related products"
-        }
-      ]
-    }
-    {% endschema %}
-    `
-    }
-  };
+      .related-product {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 33%;
+        margin-bottom: 30px;
+      }
+      
+      .related-product img {
+        max-width: 100%;
+        margin-bottom: 10px;
+        height:330px;
+        max-height:300px;
+      }
+      
+      .related-product h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+      
+      .related-product span {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      
+      .related-product form {
+        display: flex;
+        align-items: center;
+      }
+      
+      .related-product button {
+        background-color: #000;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 0;
+        text-transform: uppercase;
+        font-weight: bold;
+        cursor: pointer;
+      }
+        
+      </style>
+      {% schema %}
+      {
+        "name": "Related products",
+        "settings": [
+          {
+            "type": "text",
+            "label": "Heading",
+            "id": "heading",
+            "default": "You may also like"
+          }
+        ],
+        "presets": [
+          {
+            "name": "Related products"
+          }
+        ]
+      }
+      {% endschema %}`
+      }
+    };
 
-  const options = {
-    method: 'PUT',
-    url: `https://test-downtown.myshopify.com/admin/api/2021-01/themes/147562135836/assets.json`,
-    headers: {
-      'X-Shopify-Access-Token': res.locals.shopify.session.accessToken,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  };
+    const options = {
+      method: 'PUT',
+      url: `https://test-downtown.myshopify.com/admin/api/2021-01/themes/147562135836/assets.json`,
+      headers: {
+        'X-Shopify-Access-Token': res.locals.shopify.session.accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    };
 
-  Request(options, (error, response, body) => {
-    if (error) {
-      console.log("Error", error)
-      res.status(500).send(error);
-    }
-    const assets = JSON.parse(body);
-    console.log(assets);
-    res.status(200).send(assets);
+    Request(options, (error, response, body) => {
+      if (error) {
+        console.log("Error", error)
+        res.status(500).send(error);
+      } else {
+        const assets = JSON.parse(body);
+        console.log(assets);
+        res.status(200).send(assets);
+      }
+    });
   });
 })
 
 app.get("/related-product", async (_req, res) => {
-  try {
-    const productDataAll = await Product.aggregate([{ $sample: { size: 5 } }]);
-    res.status(200).send(productDataAll);
-    
-    
-  } 
-  catch (error) {
-    res.status(500).send({ message: error.message });
+  if (_req.query && _req.query.productName) {
+    let query = {
+      title: { $ne: _req.query.productName }
+    }
+
+    try {
+      const productDataAll = await Product.aggregate([{ $match: query }, { $sample: { size: 5 } }]);
+      res.status(200).send(productDataAll);
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
+  } else {
+    try {
+      const productDataAll = await Product.aggregate([{ $sample: { size: 5 } }]);
+      res.status(200).send(productDataAll);
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
   }
 });
 

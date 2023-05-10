@@ -18,13 +18,13 @@ function Order() {
   //   });
   // }
   const addTheme = async() =>{
-    const responseOrderApi = await fetch("/api/add-related-theme");
+    const responseOrderApi = await fetch("/api/handle");
     console.log("responseApi", responseOrderApi)
   }
   return (
     <div>
       {/* <Button onClick={handleOrders}>Orders</Button> */}
-      <Button onClick={Random}>random</Button>
+      {/* <Button onClick={Random}>random</Button> */}
       <Button onClick={addTheme}>Add Theme</Button>
     </div>
   )
