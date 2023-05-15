@@ -11,7 +11,6 @@ import {
   Toast,
 } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks";
-import { } from 'dotenv/config'
 
 function Order() {
   const fetch = useAuthenticatedFetch();
@@ -20,7 +19,7 @@ function Order() {
   const [tableLoader, setTableLoader] = useState(true);
   const [active, setActive] = useState(false);
 
-  let limit = process.env.PRODUCT_LIST_LIMIT;
+  let limit = 5;
   useEffect(() => {
     getData();
   }, [pageNumber]);

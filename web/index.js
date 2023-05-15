@@ -113,7 +113,7 @@ app.get("/api/addOrders", async (_req, res) => {
 
 app.get("/api/products", async (_req, res) => {
   let page = parseInt(_req.query.pageNumber)
-  let limit = parseInt(_req.query.limit)
+  let limit = process.env.PRODUCT_LIST_LIMIT;
   let skip = (page - 1) * limit;
   const productDataAll = await Product.find({}, {}, { skip: skip, limit: limit });
   const productCount = await Product.count({});
@@ -122,7 +122,7 @@ app.get("/api/products", async (_req, res) => {
 
 app.get("/api/orders", async (_req, res) => {
   let page = parseInt(_req.query.pageNumber)
-  let limit = parseInt(_req.query.limit)
+  let limit = process.env.PRODUCT_LIST_LIMIT;
   let skip = (page - 1) * limit;
   const orderDataAll = await Order.find({}, {}, { skip: skip, limit: limit });
   const orderCount = await Order.count({});

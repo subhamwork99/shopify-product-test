@@ -11,14 +11,13 @@ import {
   Toast,
 } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks";
-import { } from 'dotenv/config'
 function Products() {
   const fetch = useAuthenticatedFetch();
   const [pageNumber, setPageNumber] = useState(1);
   const [productData, setProductData] = useState([]);
   const [tableLoader, setTableLoader] = useState(true);
+  let limit = 5;
 
-  let limit = process.env.PRODUCT_LIST_LIMIT;
   useEffect(() => {
     getData();
   }, [pageNumber]);
