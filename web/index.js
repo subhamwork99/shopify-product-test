@@ -12,20 +12,27 @@ import GDPRWebhookHandlers from "./gdpr.js";
 import Mongoose from "mongoose"
 import Request from 'request';
 import fs from 'fs';
+import { } from 'dotenv/config'
 
+// const https = require('https')
 const app = express();
 app.use(express.json())
 app.use(cors())
 // Mongoose.connect("mongodb://localhost:27017/downtown-shopify-test");
-Mongoose.connect("mongodb+srv://subhamworkojha:subhamworkojha@cluster0.enku150.mongodb.net/shopifyDowntownDemo")
+Mongoose.connect(`${process.env.MONGODB_CONNECT}`)
   .then((res) => console.log("database connected"))
   .catch((error) => console.log("error", error))
 
+// Product Schema
 const productSchema = new Mongoose.Schema({
   title: { type: String }
 }, { strict: false });
-
 const Product = Mongoose.model("products", productSchema);
+
+//Order Schema
+const orderSchema = new Mongoose.Schema({}, { strict: false });
+const Order = Mongoose.model("orders", orderSchema);
+
 // const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 const PORT = 8081;
 console.log("PORT", PORT);
@@ -61,105 +68,8 @@ app.get("/api/products/count", async (_req, res) => {
   const countData = await shopify.api.rest.Product.count({
     session: res.locals.shopify.session,
   });
-  console.log("countData", countData)
   res.status(200).send(countData);
 });
-
-app.get("/api/recommendations", async (_req, res) => {
-  const data = {
-    asset: {
-      key: 'sections/related-products.liquid',
-      value: `
-      <div class="related">
-      <div class="width">
-        <h2>{{ section.settings.heading }}</h2>
-    
-        <div class="related-products">
-        </div>
-      </div>
-    </div>
-    {% if cart.item_count > 0 %}
-  {% assign relatedId = cart.items[0].product_id %}
-{% else %}
-  {% assign relatedId = 8233976463644 %}
-{% endif %}
-    `
-    }
-  };
-
-  const options = {
-    method: 'PUT',
-    url: `https://test-downtown.myshopify.com/admin/api/2021-01/themes/147562135836/assets.json`,
-    headers: {
-      'X-Shopify-Access-Token': res.locals.shopify.session.accessToken,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  };
-
-  Request(options, (error, response, body) => {
-    if (error) {
-      console.log("Error", error)
-      res.status(500).send(error);
-    }
-    const assets = JSON.parse(body);
-    console.log(assets);
-    res.status(200).send(assets);
-  });
-
-
-  // const requestOptions = {
-  //   method: "PUT",
-  //   headers: { "X-Shopify-Access-Token": "", "Content-Type": "application/json" },
-  //   body: JSON.stringify({
-  //     asset: {
-  //       key: "sections/related-products.liquid",
-  //       value: "<img src='backsoon-postit.png'><p>We are busy updating the store for you and will be back within the hour.</p>",
-  //     }
-  //   }),
-  // };
-
-  // try {
-  //   const response = await fetch(
-  //     "https://test-downtown.myshopify.com/admin/api/2023-04/themes/147562135836/assets.json",
-  //     requestOptions
-  //   );
-  //   console.log("response", response);
-  //   res.status(200).send(response);  
-  // } catch (error) {
-  //   console.log("error", error);
-  //   res.status(500).send(error);  
-  // }
-
-
-
-  // **************
-  // const responeAllTheam = await shopify.api.rest.Asset.all({
-  //   session: res.locals.shopify.session,
-  //   theme_id: 147562135836,
-  //   asset: { "key": "sections/related-products.liquid" },
-  // });
-
-  // // res.status(200).send(responeAllTheam);
-  // let value = responeAllTheam.data[0].value
-  // const asset = new shopify.api.rest.Asset({ session: res.locals.shopify.session });
-  // asset.theme_id = 147562135836;
-  // asset.key = "sections/related-products.liquid";
-  // // asset.value = value
-  // asset.value =  "<h1>hello</h1>"
-  // console.log("asset::", asset)
-
-  // try {
-  //   const responseSave = await asset.save({
-  //     update: true
-  //   });
-  //   console.log("responseSave::", responseSave)
-  //   res.status(200).send(responseSave);
-  // } catch (error) {
-  //   console.log("error::", error);
-  //   res.status(500).send({ error: error });
-  // }
-})
 
 app.get("/api/orders/count", async (_req, res) => {
   try {
@@ -169,168 +79,70 @@ app.get("/api/orders/count", async (_req, res) => {
     });
     res.status(200).send(orderResponse);
   } catch (error) {
-    console.log("error::", error)
+    // console.log("error::", error)
     res.status(500).send(error);
   }
-
 });
 
 app.get("/api/addProducts", async (_req, res) => {
-  // console.log("addProducts****************")
   const productDataAll = await shopify.api.rest.Product.all({
     session: res.locals.shopify.session,
-  });
-  const insertResponse = await Product.insertMany(productDataAll.data)
-  res.status(200).send(insertResponse);
+  })
+  try {
+    await Product.deleteMany({})
+    const insertResponse = await Product.insertMany(productDataAll.data)
+    res.status(200).send(insertResponse);
+  } catch (error) {
+    // console.log("error", error)
+    res.status(500).send(error);
+  }
 });
 
-app.get("/api/handle", async (_req, res) => {
+app.get("/api/addOrders", async (_req, res) => {
+  const orderAll = await shopify.api.rest.Order.all({
+    session: res.locals.shopify.session,
+  })
   try {
-    const product = await shopify.product.get({ handle: req.params.handle });
-    const data = await client.query({
-      data: {
-        query: `query getProductIdFromHandle($handle: String!) {
-          productByHandle(handle: $handle) {
-            id
-          }
-        }`,
-        variables: {
-          handle: 'element',
-        },
-      },
-    });
-
-    res.json({
-      success: true,
-      productId: data.productByHandle.id,
-    });
+    await Order.deleteMany({})
+    const insertResponse = await Order.insertMany(orderAll.data)
+    res.status(200).send(insertResponse);
   } catch (error) {
-    console.error(error);
-    res.json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).send(error);
   }
 });
 
 app.get("/api/products", async (_req, res) => {
-  const productDataAll = await Product.find();
-  res.status(200).send(productDataAll);
-});
+  let page = parseInt(_req.query.pageNumber)
+  let limit = parseInt(_req.query.limit)
+  let skip = (page - 1) * limit;
+  const productDataAll = await Product.find({}, {}, { skip: skip, limit: limit });
+  const productCount = await Product.count({});
+  res.status(200).send({ products: productDataAll, productCount: productCount });
+})
+
+app.get("/api/orders", async (_req, res) => {
+  let page = parseInt(_req.query.pageNumber)
+  let limit = parseInt(_req.query.limit)
+  let skip = (page - 1) * limit;
+  const orderDataAll = await Order.find({}, {}, { skip: skip, limit: limit });
+  const orderCount = await Order.count({});
+  res.status(200).send({ orders: orderDataAll, orderCount: orderCount });
+})
 
 app.get("/api/add-related-theme", async (_req, res) => {
+  let recommendationsChange = _req.query.recommendationsChange
+
   fs.readFile('./theme-assets.html', 'utf8', function (err, HtmlData) {
-    console.log("data", HtmlData);
     const data = {
       asset: {
-        key: 'sections/related-products.liquid',
-        value: `<div class="related">
-        <div class="width">
-          <h2 class="main-heading">{{ section.settings.heading }}</h2>
-      
-          <div class="related-products">
-          </div>
-        </div>
-      </div>
-      
-      <script>
-      function buildBlock(product) {
-        console.log("buildBlock", product)
-        const html =${HtmlData} 
-        return html
-      }
-        function getData(){
-          fetch('https://shopify-product-test-2.onrender.com/related-product')
-            .then(response => response.json())
-            .then(products => {
-              console.log("products", products)
-              products && products.forEach(product => {
-                const html = buildBlock(product)
-                document.querySelector('.related-products').innerHTML += html
-              })
-            })
-        }        
-        getData();
-      </script>
-      <style>
-        .main-heading{
-              display: flex;
-          justify-content: center;
-          font-size: 2.5rem;
-          font-weight: 600;
-        }
-      .related-products {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-      }
-      
-      .related-product {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 33%;
-        margin-bottom: 30px;
-      }
-      
-      .related-product img {
-        max-width: 100%;
-        margin-bottom: 10px;
-        height:330px;
-        max-height:300px;
-      }
-      
-      .related-product h3 {
-        font-size: 18px;
-        margin-bottom: 10px;
-      }
-      
-      .related-product span {
-        font-size: 16px;
-        margin-bottom: 10px;
-      }
-      
-      .related-product form {
-        display: flex;
-        align-items: center;
-      }
-      
-      .related-product button {
-        background-color: #000;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 0;
-        text-transform: uppercase;
-        font-weight: bold;
-        cursor: pointer;
-      }
-        
-      </style>
-      {% schema %}
-      {
-        "name": "Related products",
-        "settings": [
-          {
-            "type": "text",
-            "label": "Heading",
-            "id": "heading",
-            "default": "You may also like"
-          }
-        ],
-        "presets": [
-          {
-            "name": "Related products"
-          }
-        ]
-      }
-      {% endschema %}`
+        key: `${process.env.RELATED_PRODUCTS}`,
+        value: (recommendationsChange === 'true') ? ` ${HtmlData} ` : null
       }
     };
 
     const options = {
       method: 'PUT',
-      url: `https://test-downtown.myshopify.com/admin/api/2021-01/themes/147562135836/assets.json`,
+      url: `${process.env.THEME_URL}`,
       headers: {
         'X-Shopify-Access-Token': res.locals.shopify.session.accessToken,
         'Content-Type': 'application/json'
@@ -356,10 +168,8 @@ app.get("/related-product", async (_req, res) => {
     let query = {
       title: { $ne: _req.query.productName }
     }
-
     try {
       const productDataAll = await Product.aggregate([{ $match: query }, { $sample: { size: 5 } }]);
-      
       res.status(200).send(productDataAll);
     } catch (error) {
       res.status(500).send({ message: error.message });
@@ -372,6 +182,24 @@ app.get("/related-product", async (_req, res) => {
       res.status(500).send({ message: error.message });
     }
   }
+});
+
+app.get("/api/theme-data-status", async (_req, res) => {
+  const themeStatus = await shopify.api.rest.Asset.all({
+    session: res.locals.shopify.session,
+    theme_id: process.env.THEME_ID,
+    asset: { "key": `${process.env.RELATED_PRODUCTS}` },
+  })
+  res.status(200).send({ themeValueStatus: themeStatus?.data[0].value.length > 0 });
+})
+
+
+app.get("/api/userinformation", async (_req, res) => {
+  const ShopAllData = await shopify.api.rest.Shop.all({
+    session: res.locals.shopify.session,
+  })
+  // console.log("res.locals", ShopAllData);
+  res.status(200).send({ "res": ShopAllData });
 });
 
 

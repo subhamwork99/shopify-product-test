@@ -93,6 +93,7 @@ export default async function productCreator(
           query: CREATE_PRODUCTS_MUTATION,
           variables: {
             input: {
+              images: [{ src: "https://upload.wikimedia.org/wikipedia/commons/4/41/Sunflower_from_Silesia2.jpg" }],
               title: `${randomTitle()}`,
               variants: [{ price: randomPrice() }],
             },

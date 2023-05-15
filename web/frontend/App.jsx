@@ -14,7 +14,6 @@ export default function App() {
   // See documentation for <Routes /> for more info
   // const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
   const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
-
   return (
     <PolarisProvider>
       <BrowserRouter>

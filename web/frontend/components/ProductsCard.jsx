@@ -34,7 +34,7 @@ export function ProductsCard() {
 
     if (response.ok) {
       let proCount = await refetchProductCount();
-      console.log("proCount", proCount)
+      // console.log("proCount", proCount)
       setToastProps({ content: "5 products created!" });
     } else {
       setIsLoading(false);
