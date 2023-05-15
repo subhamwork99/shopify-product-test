@@ -11,6 +11,7 @@ import {
   Toast,
 } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks";
+import { } from 'dotenv/config'
 
 function Order() {
   const fetch = useAuthenticatedFetch();
