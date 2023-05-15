@@ -19,7 +19,7 @@ function Order() {
   const [tableLoader, setTableLoader] = useState(true);
   const [active, setActive] = useState(false);
 
-  let limit = 5;
+  let limit = process.env.PRODUCT_LIST_LIMIT;
   useEffect(() => {
     getData();
   }, [pageNumber]);
