@@ -95,6 +95,7 @@ export default function HomePage({ children }) {
               excludePaths: ["#"],
               label: "Orders",
               icon: OrdersMinor,
+              disabled:true,
               badge: orderCount,
               selected: selectedTab === "orders",
               onClick: () => toggleTab("orders"),
@@ -115,14 +116,14 @@ export default function HomePage({ children }) {
               selected: selectedTab === "Widgets",
               onClick: () => toggleTab("Widgets"),
             },
-            {
-              // url: "/products",
-              excludePaths: ["#"],
-              label: "Analytics",
-              icon: AnalyticsMinor,
-              selected: selectedTab === "Analytics",
-              onClick: () => toggleTab("Analytics"),
-            },
+            // {
+            //   // url: "/products",
+            //   excludePaths: ["#"],
+            //   label: "Analytics",
+            //   icon: AnalyticsMinor,
+            //   selected: selectedTab === "Analytics",
+            //   onClick: () => toggleTab("Analytics"),
+            // },
           ]}
           action={{
             // icon: <Icon source={HomeMajor} />,
@@ -144,8 +145,8 @@ export default function HomePage({ children }) {
         return <Order />;
       case "products":
         return <Products />;
-      case "Analytics":
-        return <Analytics />;
+      // case "Analytics":
+      //   return <Analytics />;
       case "Widgets":
         return <Widgets />;
       default:
