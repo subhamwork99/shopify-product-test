@@ -1,0 +1,244 @@
+#page-title {
+  color: #38473c;
+  font-weight: 800;
+  font-size: 1.5rem;
+  margin-bottom: 19px;
+  text-transform: uppercase;
+}
+
+.sideBar .Polaris-Navigation__ItemWrapper {
+  padding: unset;
+  height: 100%;
+}
+
+.sideBar .Polaris-Navigation__Item--selected .Polaris-Navigation__Text {
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+.sideBar .Polaris-Navigation__Icon svg{
+  fill: #5B6A60;
+}
+
+.sideBar .Polaris-Navigation__Item--selected .Polaris-Navigation__Icon svg,
+.sideBar .Polaris-Navigation__Item--selected:hover .Polaris-Navigation__Icon svg,
+.sideBar .Polaris-Navigation--subNavigationActive .Polaris-Navigation__Icon svg,
+.sideBar .Polaris-Navigation--subNavigationActive:hover .Polaris-Navigation__Icon svg,
+.sideBar .Polaris-Navigation--itemChildActive .Polaris-Navigation__Icon svg,
+.sideBar .Polaris-Navigation--itemChildActive:hover .Polaris-Navigation__Icon svg {
+  fill: #ffffff;
+  height: 100%;
+  align-items: center;
+  display: flex;
+}
+
+.sideBar .Polaris-Navigation__Item--selected::before {
+  background-color: unset;
+}
+
+.sideBar .Polaris-Navigation__ListItem:has(.Polaris-Navigation__Item--selected) {
+  background-color: #37473c;
+}
+
+.sideBar .Polaris-Navigation__Item--selected:hover,
+.sideBar .Polaris-Navigation__Item--selected:focus-visible {
+  background-color: #37473c;
+}
+
+.sideBar .Polaris-Navigation__ItemInnerWrapper {
+  height: 100%;
+  border-radius: unset;
+  border-top: unset !important;
+}
+
+.sideBar .Polaris-Navigation__ListItem {
+  margin: 0 4px;
+  border-radius: 7px;
+  height: 43px;
+}
+
+.sideBar .Polaris-Navigation__Text {
+  font-size: 1.2rem;
+  align-items: center;
+  font-weight: 500;
+}
+
+.sideBar .Polaris-Navigation__Item {
+  display: flex;
+  align-items: center;
+  border-radius: 7px;
+}
+
+.sideBar .Polaris-Navigation__Icon {
+  height: 100%;
+  margin: 0 10px 0 0;
+}
+
+.sideBar .Polaris-Navigation__Icon .Polaris-Icon {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.sideBar .Polaris-Navigation__Item--selected .Polaris-Navigation__Badge {
+  color: #ffffff;
+}
+
+.sideBar .Polaris-Navigation__Badge {
+  margin: 0;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  margin-right: 7px;
+}
+
+.sideBar .Polaris-Navigation__PrimaryNavigation {
+  background-color: #ffffff;
+  padding-top: 0;
+}
+
+.sideBar .navLogo .Polaris-Thumbnail {
+  border: none;
+  width: 100%;
+  height: 58px;
+}
+
+.sideBar .navLogo .Polaris-Thumbnail img {
+  width: 100%;
+  margin: 0;
+}
+
+.sideBar .navIcon .Polaris-Thumbnail {
+  border: unset;
+  background-color: transparent;
+}
+
+.sideBar .navIcon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* checkBox */
+
+#check-box .toggle {
+  position: relative;
+  box-sizing: border-box;
+}
+
+#check-box .toggle input[type="checkbox"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  opacity: 0;
+}
+
+#check-box .toggle input[type="checkbox"]:checked+label:before {
+  background: #474748;
+}
+
+#check-box .toggle input[type="checkbox"]:checked+label:after {
+  left: 25px;
+  background: #f1de65;
+}
+
+#check-box .toggle label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+#check-box .toggle label:before {
+  content: "";
+  width: 50px;
+  height: 27px;
+  position: relative;
+  display: inline-block;
+  background: #474748;
+  border-radius: 46px;
+  border: 2px solid #000;
+  box-sizing: border-box;
+  transition: 0.2s ease-in;
+}
+
+#check-box .toggle label:after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px; 
+  border-radius: 50%;
+  left: 3px;
+  top: 2.25px;
+  z-index: 2;
+  background: #fff;
+  box-sizing: border-box;
+  transition: 0.2s ease-in;
+}
+
+/* Recommendation Card */
+
+#recommendation {
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: #504e54;
+}
+
+#recommendation-text {
+  color: #9b9d97;
+  line-height: 1.1;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card-grid .Polaris-Card {
+  margin: 0 7px 7px 0;
+  width: 32.5%;
+}
+
+.Polaris-Card__Section {
+  padding: 1rem;
+}
+
+.section-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media only screen and (max-width: 1250px) {
+
+  .card-grid .Polaris-Card {
+    width: 49%;
+  margin: 0 4px  7px 0;
+
+  }
+  .card-grid {
+    justify-content: space-between;
+  }
+
+  #recommendation {
+    font-size: 1.1rem;
+  }
+  #recommendation-text {
+    line-height: unset;
+    font-size: unset;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .card-grid .Polaris-Card {
+    width: 100%;
+  }
+}

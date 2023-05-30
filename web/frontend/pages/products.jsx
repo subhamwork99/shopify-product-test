@@ -8,7 +8,6 @@ import {
   Thumbnail,
   Button,
   Spinner,
-  Toast,
 } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks";
 function Products() {
@@ -34,7 +33,7 @@ function Products() {
       })
       .catch((err) => {
         setProductData([]);
-        setTableLoader(true);
+        setTableLoader(false);
       });
   };
 
@@ -76,6 +75,16 @@ function Products() {
             }}
           >
             <Spinner accessibilityLabel="Spinner example" size="large" />
+          </div>
+        ) : productData?.length == 0 ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: "2rem 0",
+            }}
+          >
+            No Data Found
           </div>
         ) : (
           <>

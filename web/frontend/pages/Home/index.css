@@ -1,0 +1,132 @@
+.nameNavBar .Polaris-Card {
+  margin: 0.8rem 0;
+  background-color: #fbf7d9 !important;
+  color: #5b6a60;
+}
+
+.nameNavBar .Polaris-Text--root {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.question-div .Polaris-Card {
+  padding: 1rem;
+  font-size: 1.2rem;
+  color: #212121;
+  font-weight: 500;
+  position: relative;
+}
+
+#question {
+  padding-bottom: 0.8rem;
+}
+
+#question-option {
+  padding: 0.2rem 0;
+}
+
+.windowImage {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+}
+
+#component-header {
+  font-size: 1.3rem;
+  color: #38473c;
+  margin: 0.8rem 0;
+  font-weight: 600;
+}
+
+.active-widgets .Polaris-Card {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  align-items: center;
+
+}
+
+.widgetsimg {
+  height: 225px;
+  width: 225px;
+}
+
+#widgets-header {
+  color: #202223;
+  font-size: 18px;
+  line-height: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+#widgets-text {
+  text-align: center;
+  color: #6D7175;
+  letter-spacing: 1px;
+}
+
+.homeWrapper {
+  width: 100%;
+  height: auto;
+  padding: 0;
+}
+
+@media only screen and (max-width: 1158px) {
+  #widgets-header {
+    font-size: 16px;
+    line-height: 18px;
+  }
+
+  #widgets-text {
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+}
+
+@media only screen and (max-width: 998px) {
+  #question {
+    font-size: 18px;
+  }
+
+  #question-option {
+    font-size: 18px
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .question-div .Polaris-Card {
+    padding: 0.8rem;
+  }
+
+  .active-widgets .Polaris-Card {
+    padding: 50px 25px !important;
+  }
+
+  #question {
+    font-size: 14px;
+    padding-bottom: 0.3rem;
+  }
+
+  #question-option {
+    font-size: 14px;
+    padding: 0rem 0;
+  }
+  #HelloText{
+    font-size: 1rem;
+  }
+}
+
+
+@media only screen and (max-width: 489px) {
+  .homeWrapper .Polaris-Page {
+    padding: 0 1rem !important;
+  }
+  .homeWrapper .Polaris-Card {
+    border-radius: var(--p-border-radius-2);
+}
+.homeWrapper .Polaris-Layout__Section{
+  margin-top: 0;
+}
+}

@@ -11,13 +11,11 @@ import {
   Toast,
 } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks";
-
 function Order() {
   const fetch = useAuthenticatedFetch();
   const [pageNumber, setPageNumber] = useState(1);
   const [orderData, setOrderData] = useState([]);
   const [tableLoader, setTableLoader] = useState(true);
-  const [active, setActive] = useState(false);
 
   let limit = 5;
   useEffect(() => {
@@ -36,7 +34,7 @@ function Order() {
       })
       .catch((err) => {
         setOrderData([]);
-        setTableLoader(true);
+        setTableLoader(false);
       });
   };
 
@@ -62,10 +60,6 @@ function Order() {
     }
     setActive(true);
   };
-  const toggleActive = useCallback(() => setActive((active) => !active), []);
-  const toastMarkup = active ? (
-    <Toast content="Data Are Add" onDismiss={toggleActive} />
-  ) : null;
   return (
     <Page>
       <div
@@ -75,7 +69,7 @@ function Order() {
       </div>
       <LegacyCard>
         {/* {tableLoader && rows && rows.length > 0 && tableLoader( */}
-        {tableLoader ? (
+         {tableLoader ? (
           <div
             style={{
               display: "flex",
@@ -84,6 +78,16 @@ function Order() {
             }}
           >
             <Spinner accessibilityLabel="Spinner example" size="large" />
+          </div>
+        ) : orderData?.length == 0 ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: "2rem 0",
+            }}
+          >
+            No Data Found
           </div>
         ) : (
           <>
@@ -111,7 +115,6 @@ function Order() {
           />
         </div>
       </LegacyCard>
-      {toastMarkup}
     </Page>
   );
 }
