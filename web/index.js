@@ -84,19 +84,52 @@ app.get("/api/orders/count", async (_req, res) => {
   }
 });
 
+// app.get("/api/addProducts", async (_req, res) => {
+//   const productDataAll = await shopify.api.rest.Product.all({
+//     session: res.locals.shopify.session,
+//   })
+//   try {
+//     await Product.deleteMany({})
+//     const insertResponse = await Product.insertMany(productDataAll.data)
+//     res.status(200).send(insertResponse);
+//   } catch (error) {
+//     // console.log("error", error)
+//     res.status(500).send(error);
+//   }
+// });
+
 app.get("/api/addProducts", async (_req, res) => {
-  const productDataAll = await shopify.api.rest.Product.all({
-    session: res.locals.shopify.session,
-  })
   try {
-    await Product.deleteMany({})
-    const insertResponse = await Product.insertMany(productDataAll.data)
-    res.status(200).send(insertResponse);
+    const productDataAll = await shopify.api.rest.Product.all({
+      session: res.locals.shopify.session,
+    });
+    
+    await Product.deleteMany({});
+    
+    const newObject = await Promise.all(productDataAll.data.map(async (product) => {
+      const relatedProduct = [];
+      
+      for (const subProduct of productDataAll.data) {
+        if (relatedProduct.length === 5) {
+          break; // Break the loop if 5 related products are already added
+        }
+        
+        if (subProduct.title !== product.title) {
+          relatedProduct.push(subProduct);
+        }
+      }
+      
+      return { 'related-product': relatedProduct, ...product };
+    }));
+    
+    const insertResponse = await Product.insertMany(newObject);
+    res.status(200).send(newObject);
   } catch (error) {
-    // console.log("error", error)
     res.status(500).send(error);
   }
 });
+
+
 
 app.get("/api/addOrders", async (_req, res) => {
   const orderAll = await shopify.api.rest.Order.all({
@@ -165,12 +198,13 @@ app.get("/api/add-related-theme", async (_req, res) => {
 
 app.get("/related-product", async (_req, res) => {
   if (_req.query && _req.query.productName) {
-    let query = {
-      title: { $ne: _req.query.productName }
-    }
+    // let query = {
+    //   title: { $ne: _req.query.productName }
+    // }
     try {
-      const productDataAll = await Product.aggregate([{ $match: query }, { $sample: { size: 5 } }]);
-      res.status(200).send(productDataAll);
+      const productDataAll = await Product.aggregate([{ $match: {title: _req.query.productName} }, { $sample: { size: 5 } }]);
+      console.log("productDataAll")
+      res.status(200).send(productDataAll['related-product']);
     } catch (error) {
       res.status(500).send({ message: error.message });
     }

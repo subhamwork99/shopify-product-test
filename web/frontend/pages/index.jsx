@@ -1,4 +1,4 @@
-import { Frame, Navigation, AppProvider, Thumbnail } from "@shopify/polaris";
+import { Frame, Navigation, AppProvider, Thumbnail,TopBar } from "@shopify/polaris";
 import {
   HomeMinor,
   OrdersMinor,
@@ -9,8 +9,8 @@ import {
 import React, { useState, useCallback, useEffect } from "react";
 import Routes from "./../Routes";
 import { Route } from "react-router-dom";
-import Home from "./Home/Home";
-import Products from "./products";
+import Home from "./Home";
+import Products from "./Product";
 import Order from "./order";
 import Analytics from "./Analytics";
 import Widgets from "./Widgets/index";
@@ -154,11 +154,32 @@ export default function HomePage({ children }) {
     }
   };
 
+  const [mobileNavigationActive, setMobileNavigationActive] = useState(false);
+
+  const toggleMobileNavigationActive = useCallback(
+    () =>
+      setMobileNavigationActive(
+        (mobileNavigationActive) => !mobileNavigationActive
+      ),
+    []
+  );
+
+
   return (
     <div style={{ height: "500px" }}>
       <AppProvider i18n={{}}>
-        <Frame navigation={navigationMarkup} showNavigationToggle={isNavigationOpen}>{renderPage()}</Frame>
+        <Frame navigation={navigationMarkup} 
+        showNavigationToggle={isNavigationOpen}
+        showMobileNavigation={mobileNavigationActive}
+          onNavigationDismiss={toggleMobileNavigationActive}
+        >
+           <TopBar
+            showNavigationToggle
+            onNavigationToggle={toggleMobileNavigationActive}
+          />
+          {renderPage()}</Frame>
       </AppProvider>
     </div>
   );
 }
+

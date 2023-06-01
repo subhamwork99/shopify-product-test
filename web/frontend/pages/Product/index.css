@@ -1,0 +1,158 @@
+.product-title{
+    margin-left: 20px;
+}
+
+
+.tableWrapper thead tr th{
+    background-color: #FBF7D9;
+    color: #5B6A60;
+  }
+  .tableWrapper tbody tr td{
+    color: #212121;
+  }
+  .tableWrapper thead tr .Polaris-IndexTable__TableHeading--second{
+    width: 50px;
+  }
+
+.productWrapper .Pagination-btn{
+  display: flex;
+  position: absolute;
+    bottom: 8px;
+    justify-content: center;
+    width: -webkit-fill-available;  
+}
+.tableWrapper tbody tr .title-cell{
+  width: 50%;
+}
+
+.tableWrapper .Polaris-LegacyCard{
+  min-height: 795px;
+  padding-bottom: 50px;
+}
+
+.tableWrapper .Polaris-IndexFilters__ActionWrap{
+  display: none;
+ }
+
+@media (max-width: 30.6225em){
+ .tableWrapper .Polaris-IndexFilters.Polaris-IndexFilters__IndexFiltersSticky {
+     position: unset;
+ }
+}
+ .productWrapper thead tr{
+  border-top: var(--p-border-width-1) solid var(--p-color-border-subdued);
+  border-bottom: var(--p-border-width-1) solid var(--p-color-border-subdued);
+}
+
+.productWrapper tbody tr{
+  border-bottom:  var(--p-border-width-1) solid var(--p-color-border-subdued);
+}
+
+.productWrapper .Polaris-LegacyCard:first-child {
+  position: relative;
+}
+
+
+.productWrapper  .Polaris-Box #create-new-view {
+  display: none;
+}
+
+#all-customers-1{
+  background-color: #F1F8F5;
+  border-radius: 5px;
+}
+
+.search-component{
+  display: flex;
+  gap: 10px;
+}
+
+.search-component div:first-child{
+  width: 100%;
+}
+
+#related-product-Wrapper{
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+/* Selected */
+.Selected-product-img{
+  display: flex;
+}
+.Selected-product-img .Polaris-Card:first-child{
+  height: 100px;
+  width: 100px;
+  padding: 0 9px;
+  background: #D1D4D9;
+}
+
+.Selected-product-text{
+  margin-left: 10px;
+}
+
+.Selected-product-text .Polaris-Text--root{
+  color: #5C5F62;
+}
+
+.Selected-product-text .Polaris-Text--root span{
+  margin: 0;
+  text-align: inherit;
+  line-height: 25px;
+  color: #212121;
+  font-weight: 500;
+}
+
+#product-header{
+  font-weight: 500;
+    color: #202020;
+    font-size: 17px;
+    padding-bottom: 14px;
+}
+
+#related-product{
+  font-weight: 500;
+    color: #202020;
+    font-size: 17px;
+    line-height: 30px;
+}
+
+#alternatives-text{
+  line-height: 20px;
+  color:  #5C5F62;
+}
+
+.link-Text{
+  color:#2C6ECB ;
+}

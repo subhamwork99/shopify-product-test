@@ -14,6 +14,7 @@ function Analytics() {
   const [analytics, setAnalytics] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  
   const [toastContent, setToastContent] = useState({});
   const fetch = useAuthenticatedFetch();
 

@@ -42,6 +42,7 @@ export default function Home() {
     handleOrdersCount();
   }, []);
 
+
   useEffect(async () => {
     if (countProduct === 0) {
       await fetch("/api/addProducts");

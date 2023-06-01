@@ -19,6 +19,10 @@
   fill: #5B6A60;
 }
 
+.Polaris-TopBar{
+  height: unset;
+}
+
 .sideBar .Polaris-Navigation__Item--selected .Polaris-Navigation__Icon svg,
 .sideBar .Polaris-Navigation__Item--selected:hover .Polaris-Navigation__Icon svg,
 .sideBar .Polaris-Navigation--subNavigationActive .Polaris-Navigation__Icon svg,
