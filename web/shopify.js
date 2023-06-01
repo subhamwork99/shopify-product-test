@@ -24,8 +24,8 @@ const shopify = shopifyApp({
     apiKey: process.env.API_KEY,
     apiSecretKey: process.env.API_SECRET_KEY,
     scopes: process.env?.SCOPES?.split(','),
-    // hostScheme: 'https',
-    // hostName: `${process.env.HOST_NAME}`,
+    hostScheme: 'https',
+    hostName: `${process.env.HOST_NAME}`,
   },
   auth: {
     path: "/api/auth",

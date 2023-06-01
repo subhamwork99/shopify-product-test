@@ -33,8 +33,8 @@ const Product = Mongoose.model("products", productSchema);
 const orderSchema = new Mongoose.Schema({}, { strict: false });
 const Order = Mongoose.model("orders", orderSchema);
 
-const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
-// const PORT = 8081;
+// const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
+const PORT = 8081;
 // console.log("PORT", PORT);
 
 
