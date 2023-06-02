@@ -119,7 +119,7 @@ app.get("/api/addProducts", async (_req, res) => {
         }
       }
       
-      return { 'related-product': relatedProduct, ...product };
+      return { related_product: relatedProduct, ...product };
     }));
     
     const insertResponse = await Product.insertMany(newObject);
@@ -163,6 +163,7 @@ app.get("/api/orders", async (_req, res) => {
 })
 
 app.get("/api/add-related-theme", async (_req, res) => {
+
   let recommendationsChange = _req.query.recommendationsChange
 
   fs.readFile('./theme-assets.html', 'utf8', function (err, HtmlData) {
@@ -172,6 +173,7 @@ app.get("/api/add-related-theme", async (_req, res) => {
         value: (recommendationsChange === 'true') ? ` ${HtmlData} ` : null
       }
     };
+    
 
     const options = {
       method: 'PUT',
@@ -202,9 +204,8 @@ app.get("/related-product", async (_req, res) => {
     //   title: { $ne: _req.query.productName }
     // }
     try {
-      const productDataAll = await Product.aggregate([{ $match: {title: _req.query.productName} }, { $sample: { size: 5 } }]);
-      console.log("productDataAll")
-      res.status(200).send(productDataAll['related-product']);
+  const productDataAll = await Product.aggregate([{ $match: {title:_req.query.productName} }]);
+      res.status(200).send(productDataAll[0].related_product);
     } catch (error) {
       res.status(500).send({ message: error.message });
     }
