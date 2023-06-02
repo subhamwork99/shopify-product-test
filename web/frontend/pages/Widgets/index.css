@@ -1,0 +1,11 @@
+@media only screen and (max-width: 489px) {
+    .widgetsWrapper .Polaris-Page {
+      padding: 0 1rem !important;
+    }
+    .widgetsWrapper .Polaris-Card {
+      border-radius: var(--p-border-radius-2);
+  }
+  .widgetsWrapper .Polaris-Layout__Section{
+    margin-top: 0;
+  }
+  }

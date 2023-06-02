@@ -46,6 +46,7 @@ function Widgets() {
   }, []);
 
   return (
+    <div className="widgetsWrapper">
     <Page fullWidth>
       <Text as="h1" id="page-title">
         Widgets
@@ -63,7 +64,7 @@ function Widgets() {
               <Card>
                 <Card.Section>
                   <div className="section-flex">
-                    <Text id="recommendation">Recommendation</Text>
+                    <Text id="recommendation">Product Recommendations</Text>
                     <section id="check-box">
                       <div className="card">
                         <div className="toggle">
@@ -81,8 +82,7 @@ function Widgets() {
                 </Card.Section>
                 <Card.Section>
                   <Text id="recommendation-text">
-                    Turn on the toggle to enable product recommendations powered
-                    by machine learning.
+                  Discover related products and make informed purchasing decisions with personalized recommendations.
                   </Text>
                 </Card.Section>
               </Card>
@@ -98,6 +98,7 @@ function Widgets() {
               />
             )}
     </Page>
+    </div>
   );
 }
 

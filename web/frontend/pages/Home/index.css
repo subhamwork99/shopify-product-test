@@ -19,10 +19,12 @@
 
 #question {
   padding-bottom: 0.8rem;
+  font-size: 14px;
 }
 
 #question-option {
   padding: 0.2rem 0;
+  font-size: 14px;
 }
 
 .windowImage {
@@ -85,15 +87,6 @@
   }
 }
 
-@media only screen and (max-width: 998px) {
-  #question {
-    font-size: 18px;
-  }
-
-  #question-option {
-    font-size: 18px
-  }
-}
 
 @media only screen and (max-width: 768px) {
   .question-div .Polaris-Card {
@@ -105,12 +98,10 @@
   }
 
   #question {
-    font-size: 14px;
     padding-bottom: 0.3rem;
   }
 
   #question-option {
-    font-size: 14px;
     padding: 0rem 0;
   }
   #HelloText{

@@ -126,7 +126,7 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
           <span>{value.title}</span>
         </IndexTable.Cell>
         <IndexTable.Cell>
-          {value['related-product']?.map((products) => (
+          {value.related_product?.map((products) => (
             <Image
               key={products.images[0].id}
               alt={products.title}

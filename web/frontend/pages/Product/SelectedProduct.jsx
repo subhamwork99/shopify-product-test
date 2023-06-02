@@ -18,7 +18,7 @@ function SelectedProduct({ setSelectedProducts, selectedProducts }) {
     setSelectedProducts({});
   };
   
-  const rows = selectedProducts['related-product']?.map(
+  const rows = selectedProducts.related_product?.map(
     (value,index) => {
       return [
         `${index +1}`,

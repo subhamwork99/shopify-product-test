@@ -4,8 +4,8 @@
 
 
 .tableWrapper thead tr th{
-    background-color: #FBF7D9;
-    color: #5B6A60;
+    background-color: #FBF7D9 !important;
+    color: #5B6A60 !important;
   }
   .tableWrapper tbody tr td{
     color: #212121;

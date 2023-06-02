@@ -26,10 +26,10 @@ export default function App() {
                 //   destination: "/pagename",
                 //   destination: "/home",
                 // },
-                {
-                  label: "Order",
-                  destination: "/order",
-                },
+                // {
+                //   label: "Order",
+                //   destination: "/order",
+                // },
                 {
                   label: "Products",
                   destination: "/products",

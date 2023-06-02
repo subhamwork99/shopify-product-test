@@ -33,8 +33,8 @@ const Product = Mongoose.model("products", productSchema);
 const orderSchema = new Mongoose.Schema({}, { strict: false });
 const Order = Mongoose.model("orders", orderSchema);
 
-// const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
-const PORT = 8081;
+const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
+// const PORT = 8081;
 // console.log("PORT", PORT);
 
 
@@ -65,10 +65,10 @@ app.use("/api/*", shopify.validateAuthenticatedSession());
 app.use(express.json());
 
 app.get("/api/products/count", async (_req, res) => {
-  const countData = await shopify.api.rest.Product.count({
-    session: res.locals.shopify.session,
-  });
-  res.status(200).send(countData);
+  const shopName = process.env.SHOP_NAME;
+  const countData = await Product.count({ shop_name: shopName });
+  console.log("countData", countData)
+  res.status(200).send({ count: countData });
 });
 
 app.get("/api/orders/count", async (_req, res) => {
@@ -108,7 +108,7 @@ app.get("/api/addProducts", async (_req, res) => {
     
     const newObject = await Promise.all(productDataAll.data.map(async (product) => {
       const relatedProduct = [];
-      
+      const shopname = process.env.SHOP_NAME
       for (const subProduct of productDataAll.data) {
         if (relatedProduct.length === 5) {
           break; // Break the loop if 5 related products are already added
@@ -119,7 +119,7 @@ app.get("/api/addProducts", async (_req, res) => {
         }
       }
       
-      return { related_product: relatedProduct, ...product };
+      return { related_product: relatedProduct, shop_name : shopname, ...product };
     }));
     
     const insertResponse = await Product.insertMany(newObject);
@@ -148,10 +148,15 @@ app.get("/api/products", async (_req, res) => {
   let page = parseInt(_req.query.pageNumber)
   let limit = process.env.PRODUCT_LIST_LIMIT;
   let skip = (page - 1) * limit;
-  const productDataAll = await Product.find({}, {}, { skip: skip, limit: limit });
-  const productCount = await Product.count({});
+  const shopName = process.env.SHOP_NAME; // Get the shop name from environment variable
+
+  // Add the condition to filter products by shop_name
+  const productDataAll = await Product.find({ shop_name: shopName }, {}, { skip: skip, limit: limit });
+  const productCount = await Product.count({ shop_name: shopName });
+
   res.status(200).send({ products: productDataAll, productCount: productCount });
-})
+});
+
 
 app.get("/api/orders", async (_req, res) => {
   let page = parseInt(_req.query.pageNumber)
@@ -218,6 +223,32 @@ app.get("/related-product", async (_req, res) => {
     }
   }
 });
+app.get("/api/get-theme-id", (_req, res) => {
+shopify.api.rest.Shop.all({
+    session: res.locals.shopify.session,
+  }).then((shopData)=>{
+    shopify.api.rest.Theme.all({ session: res.locals.shopify.session })
+      .then((themesResponse) => {
+        const themes = themesResponse.data;
+  
+        let currentThemeId;
+        themes.forEach((theme) => {
+          if (theme.role === 'main' || theme.role === 'published') {
+            currentThemeId = theme.id;
+          }
+        });
+  
+        app.set('THEME_ID' , currentThemeId)
+        app.set('SHOP_NAME' , shopData.data[0].myshopify_domain);
+        res.status(200).send({"message":'success'})
+      })
+      .catch((error) => {
+        res.status(500).send('Internal Server Error');
+      });
+  })
+});
+
+
 
 app.get("/api/theme-data-status", async (_req, res) => {
   const themeStatus = await shopify.api.rest.Asset.all({

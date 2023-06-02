@@ -163,16 +163,19 @@ export default function Home() {
             <div className="question-div">
               <Card>
                 <Text id="question" fontWeight="medium">
-                  How to get started with our plugin?
+                We are delighted to have you use Downtown: Shop & Discover app. Here are some of things to get you started:
                 </Text>
                 <Text id="question-option" fontWeight="medium">
-                  - Dummy statement step 1
+                  - Product Recommendations Widget: Enhance your product details pages by showcasing similar products to help customers discover related items and make informed purchasing decisions.
                 </Text>
                 <Text id="question-option" fontWeight="medium">
-                  - Dummy statement step 2
+                - Customization Options: Tailor the appearance of the Product Recommendations widget to seamlessly integrate with your store's branding and design.
                 </Text>
                 <Text id="question-option" fontWeight="medium">
-                  - Dummy statement step 3
+                - Enable/Disable Feature: Easily enable or disable the Product Recommendations widget based on your preference and customer needs.
+                </Text>
+                <Text id="question-option" fontWeight="medium">
+                - Real-time Data: The widget fetches and displays up-to-date product recommendations to ensure relevance and accuracy.
                 </Text>
                 <Image source={windowImage} className="windowImage" />
               </Card>
@@ -191,7 +194,7 @@ export default function Home() {
                 <Card>
                   <Card.Section>
                     <div className="section-flex">
-                      <Text id="recommendation">Recommendation</Text>
+                      <Text id="recommendation">Product Recommendations</Text>
                       <section id="check-box">
                         <div className="card">
                           <div className="toggle">
@@ -209,8 +212,7 @@ export default function Home() {
                   </Card.Section>
                   <Card.Section>
                     <Text id="recommendation-text">
-                      Turn on the toggle to enable product recommendations
-                      powered by machine learning.
+                    Discover related products and make informed purchasing decisions with personalized recommendations.
                     </Text>
                   </Card.Section>
                 </Card>
