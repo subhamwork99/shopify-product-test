@@ -30,8 +30,8 @@ const productSchema = new Mongoose.Schema({
 const Product = Mongoose.model("products", productSchema);
 
 //Order Schema
-const orderSchema = new Mongoose.Schema({}, { strict: false });
-const Order = Mongoose.model("orders", orderSchema);
+const shopSchema = new Mongoose.Schema({title: { type: String }}, { strict: false });
+const ShopDb = Mongoose.model("shop", shopSchema);
 
 const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 // const PORT = 8081;
@@ -65,10 +65,14 @@ app.use("/api/*", shopify.validateAuthenticatedSession());
 app.use(express.json());
 
 app.get("/api/products/count", async (_req, res) => {
-  const shopName = process.env.SHOP_NAME;
-  const countData = await Product.count({ shop_name: shopName });
-  console.log("countData", countData)
-  res.status(200).send({ count: countData });
+  shopify.api.rest.Shop.all({
+    session: res.locals.shopify.session,
+  }).then(async(shopData)=>{
+    const countData = await Product.count({ shop_name: shopData?.data[0].myshopify_domain });
+    res.status(200).send({ count: countData });
+  }).catch((error)=>{
+    res.status(500).send(error);
+  })
 });
 
 app.get("/api/orders/count", async (_req, res) => {
@@ -105,10 +109,15 @@ app.get("/api/addProducts", async (_req, res) => {
     });
     
     await Product.deleteMany({});
+    await ShopDb.deleteMany({});
     
+    shopify.api.rest.Shop.all({
+      session: res.locals.shopify.session,
+    }).then(async(shopData)=>{
+      await ShopDb.insertMany(shopData);
+
     const newObject = await Promise.all(productDataAll.data.map(async (product) => {
       const relatedProduct = [];
-      const shopname = process.env.SHOP_NAME
       for (const subProduct of productDataAll.data) {
         if (relatedProduct.length === 5) {
           break; // Break the loop if 5 related products are already added
@@ -118,16 +127,64 @@ app.get("/api/addProducts", async (_req, res) => {
           relatedProduct.push(subProduct);
         }
       }
-      
-      return { related_product: relatedProduct, shop_name : shopname, ...product };
-    }));
-    
-    const insertResponse = await Product.insertMany(newObject);
-    res.status(200).send(newObject);
+      return { related_product: relatedProduct,
+         shop_name : shopData?.data[0].myshopify_domain
+         , ...product };
+      })
+      );
+      const insertResponse = await Product.insertMany(newObject);
+      res.status(200).send(insertResponse);
+    }).catch((error)=>{
+      res.status(500).send(error);
+    })
   } catch (error) {
     res.status(500).send(error);
   }
 });
+
+app.get("/api/updateCatlock", async (_req, res) => {
+  debugger;
+  try {
+    const productDataAll = await shopify.api.rest.Product.all({
+      session: res.locals.shopify.session,
+    });
+
+    shopify.api.rest.Shop.all({
+      session: res.locals.shopify.session,
+    })
+      .then(async (shopData) => {
+        await Product.deleteMany({ shop_name: shopData?.data[0].myshopify_domain });
+
+        const newObject = await Promise.all(
+          productDataAll.data.map(async (product) => {
+            const relatedProduct = [];
+            for (const subProduct of productDataAll.data) {
+              if (relatedProduct.length === 5) {
+                break;
+              }
+
+              if (subProduct.title !== product.title) {
+                relatedProduct.push(subProduct);
+              }
+            }
+
+            return { related_product: relatedProduct,
+              shop_name : shopData?.data[0].myshopify_domain
+              , ...product };
+           })
+        );
+        
+        const insertResponse = await Product.insertMany(newObject);
+        res.status(200).send(insertResponse);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 
 
 
@@ -148,13 +205,18 @@ app.get("/api/products", async (_req, res) => {
   let page = parseInt(_req.query.pageNumber)
   let limit = process.env.PRODUCT_LIST_LIMIT;
   let skip = (page - 1) * limit;
-  const shopName = process.env.SHOP_NAME; // Get the shop name from environment variable
+  shopify.api.rest.Shop.all({
+    session: res.locals.shopify.session,
+  }).then(async(shopData)=>{
 
   // Add the condition to filter products by shop_name
-  const productDataAll = await Product.find({ shop_name: shopName }, {}, { skip: skip, limit: limit });
-  const productCount = await Product.count({ shop_name: shopName });
+  const productDataAll = await Product.find({ shop_name: shopData?.data[0].myshopify_domain }, {}, { skip: skip, limit: limit });
+  const productCount = await Product.count({ shop_name: shopData?.data[0].myshopify_domain });
 
   res.status(200).send({ products: productDataAll, productCount: productCount });
+  }).catch((error)=>{
+    res.status(500).send(error);
+  })
 });
 
 
@@ -178,28 +240,45 @@ app.get("/api/add-related-theme", async (_req, res) => {
         value: (recommendationsChange === 'true') ? ` ${HtmlData} ` : null
       }
     };
+    shopify.api.rest.Shop.all({
+      session: res.locals.shopify.session,
+    }).then((shopData)=>{
+      shopify.api.rest.Theme.all({ session: res.locals.shopify.session })
+        .then((themesResponse) => {
+          const themes = themesResponse.data;
     
-
-    const options = {
-      method: 'PUT',
-      url: `${process.env.THEME_URL}`,
-      headers: {
-        'X-Shopify-Access-Token': res.locals.shopify.session.accessToken,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    };
-
-    Request(options, (error, response, body) => {
-      if (error) {
-        console.log("Error", error)
-        res.status(500).send(error);
-      } else {
-        const assets = JSON.parse(body);
-        console.log(assets);
-        res.status(200).send(assets);
-      }
-    });
+          let currentThemeId;
+          themes.forEach((theme) => {
+            if (theme.role === 'main' || theme.role === 'published') {
+              currentThemeId = theme.id;
+            }
+          });
+          const options = {
+            method: 'PUT',
+            url: `https://${shopData?.data[0].myshopify_domain}/admin/api/2021-01/themes/${currentThemeId}/assets.json`,
+            headers: {
+              'X-Shopify-Access-Token': res.locals.shopify.session.accessToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          };
+          Request(options, (error, response, body) => {
+            if (error) {
+              console.log("Error", error)
+              res.status(500).send(error);
+            } else {
+              const assets = JSON.parse(body);
+              console.log(assets);
+              res.status(200).send(assets);
+            }
+          });
+        })
+        .catch((error) => {
+          res.status(500).send(error);
+        });
+    }).catch((error)=>{
+      res.status(500).send('Internal Server Error');
+    })
   });
 })
 
@@ -239,7 +318,7 @@ shopify.api.rest.Shop.all({
         });
   
         app.set('THEME_ID' , currentThemeId)
-        app.set('SHOP_NAME' , shopData.data[0].myshopify_domain);
+        app.set('SHOP_NAME' , shopData?.data[0].myshopify_domain);
         res.status(200).send({"message":'success'})
       })
       .catch((error) => {
@@ -251,13 +330,35 @@ shopify.api.rest.Shop.all({
 
 
 app.get("/api/theme-data-status", async (_req, res) => {
-  const themeStatus = await shopify.api.rest.Asset.all({
-    session: res.locals.shopify.session,
-    theme_id: process.env.THEME_ID,
-    asset: { "key": `${process.env.RELATED_PRODUCTS}` },
-  })
-  res.status(200).send({ themeValueStatus: themeStatus?.data[0].value.length > 0 });
-})
+  shopify.api.rest.Theme.all({ session: res.locals.shopify.session })
+    .then(async (themesResponse) => {
+      const themes = themesResponse.data;
+
+      let currentThemeId;
+      themes.forEach((theme) => {
+        if (theme.role === "main" || theme.role === "published") {
+          currentThemeId = theme.id;
+        }
+      });
+      const themeStatus = await shopify.api.rest.Asset.all({
+        session: res.locals.shopify.session,
+        theme_id: currentThemeId,
+        asset: { key: `${process.env.RELATED_PRODUCTS}` },
+      });
+      res
+        .status(200)
+        .send({
+          themeValueStatus:
+            themeStatus?.data[0].value.length > 0 &&
+            themeStatus?.data[0].value.includes(
+              "downtown-store-related-product"
+            ),
+        });
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
+});
 
 
 app.get("/api/userinformation", async (_req, res) => {

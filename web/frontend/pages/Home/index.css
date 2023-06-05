@@ -18,13 +18,13 @@
 }
 
 #question {
-  padding-bottom: 0.8rem;
-  font-size: 14px;
+  padding-bottom: 0.5rem;
+    font-size: 15px;
 }
 
 #question-option {
   padding: 0.2rem 0;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .windowImage {
@@ -75,6 +75,10 @@
   padding: 0;
 }
 
+#mt-1{
+  margin-top: 1rem;
+}
+
 @media only screen and (max-width: 1158px) {
   #widgets-header {
     font-size: 16px;
@@ -102,7 +106,7 @@
   }
 
   #question-option {
-    padding: 0rem 0;
+    padding: 0;
   }
   #HelloText{
     font-size: 1rem;

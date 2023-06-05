@@ -80,7 +80,7 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
     ({ title, status, vendor, images }) => {
       return [
         <div>
-          <Thumbnail source={images[0].src} alt={title} />
+          <Thumbnail source={images[0]?.src} alt={title} />
         </div>,
         title,
         status,
@@ -104,6 +104,12 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
     []
   );
 
+    const updateCatLock = async()=>{
+    await fetch("/api/updateCatlock").then((res)=>{
+      getData();
+    })
+    }
+
   const rowMarkup = productData?.products?.map(
     (value, index) => (
       <IndexTable.Row
@@ -126,11 +132,11 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
           <span>{value.title}</span>
         </IndexTable.Cell>
         <IndexTable.Cell>
-          {value.related_product?.map((products) => (
+          {value?.related_product?.map((products) => (
             <Image
-              key={products.images[0].id}
+              key={products.images[0]?.id}
               alt={products.title}
-              source={products.images[0].src}
+              source={products.images[0]?.src}
               style={{ width: "50px", height: "auto", marginRight: "10px" }}
             />
           ))}
@@ -141,9 +147,14 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
   return (
     <>
       <Page fullWidth>
+        <div className="div-flex">
         <Text as="h1" id="page-title">
           Products
         </Text>
+      <Button onClick={updateCatLock}>
+        Update CatLock
+      </Button>
+        </div>
         {/* <div
         style={{ display: "flex", justifyContent: "end", marginBottom: "1rem" }}
       >

@@ -77,7 +77,16 @@
   gap: 24px;
 }
 
+.div-flex{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 19px;
+}
 
+.div-flex #page-title{
+  margin-bottom: 0;
+}
 
 
 

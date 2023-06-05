@@ -26,7 +26,7 @@ import { Cart } from "@shopify/app-bridge/actions";
 import widgetsimg from "../../image/widgetsimg.png";
 export default function Home() {
   const [countProduct, setCountProduct] = useState("");
-  const [countOrder, setCountOrder] = useState("");
+  // const [countOrder, setCountOrder] = useState("");
   const [shopData, setShopData] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isWidgetsLoading, setIsWidgetsLoading] = useState(true);
@@ -39,7 +39,7 @@ export default function Home() {
   useEffect(() => {
     handleProductsCount();
     handleShopData();
-    handleOrdersCount();
+    // handleOrdersCount();
   }, []);
 
 
@@ -52,9 +52,9 @@ export default function Home() {
     }
   }, [countProduct]);
 
-  useEffect(async () => {
-    countOrder === 0 ? await fetch("/api/addOrders") : null;
-  }, [countOrder]);
+  // useEffect(async () => {
+  //   countOrder === 0 ? await fetch("/api/addOrders") : null;
+  // }, [countOrder]);
 
   const handleToggle = () => {
     setChecked(!checked);
@@ -84,15 +84,15 @@ export default function Home() {
         setCountProduct(data.count);
       });
   };
-  const handleOrdersCount = async () => {
-    await fetch("/api/orders/count")
-      .then((res) => {
-        return res.json();
-      })
-      .then(async (data) => {
-        setCountOrder(data.count);
-      });
-  };
+  // const handleOrdersCount = async () => {
+  //   await fetch("/api/orders/count")
+  //     .then((res) => {
+  //       return res.json();
+  //     })
+  //     .then(async (data) => {
+  //       setCountOrder(data.count);
+  //     });
+  // };
 
   const handleChange = async (value) => {
     setIsWidgetsLoading(true);
@@ -162,6 +162,7 @@ export default function Home() {
           <Layout.Section>
             <div className="question-div">
               <Card>
+                <div>
                 <Text id="question" fontWeight="medium">
                 We are delighted to have you use Downtown: Shop & Discover app. Here are some of things to get you started:
                 </Text>
@@ -177,6 +178,24 @@ export default function Home() {
                 <Text id="question-option" fontWeight="medium">
                 - Real-time Data: The widget fetches and displays up-to-date product recommendations to ensure relevance and accuracy.
                 </Text>
+                </div>
+                <div id="mt-1">
+                <Text id="question" fontWeight="medium">
+                We are actively working on bringing new widgets and features that will help in better customer engagement and drive sales, some of them are:
+                </Text>
+                <Text id="question-option" fontWeight="medium">
+                - Frequently Bought Together Widget: Increase average order value and encourage cross-selling by suggesting products commonly purchased together.
+                </Text>
+                <Text id="question-option" fontWeight="medium">
+                - Trending Products Widget: Display popular and trending products to highlight items that are currently in high demand.
+                </Text>
+                <Text id="question-option" fontWeight="medium">
+                - Personalized Recommendations: Utilize customer behavior and preferences to offer personalized product recommendations for a unique shopping experience. 
+                </Text>
+                <Text id="question-option" fontWeight="medium">
+                - Enhanced Customization: Further customize the appearance and layout of the widgets to align with your store's specific design requirements.
+                </Text>
+                </div>
                 <Image source={windowImage} className="windowImage" />
               </Card>
             </div>

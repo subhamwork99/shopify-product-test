@@ -31,9 +31,6 @@ export default function HomePage({ children }) {
     []
   );
   const toggleTab = useCallback((tab) => setSelectedTab(tab), []);
-  useEffect(() => {
-    handleOrders();
-  }, []);
 
   const handleOrders = async () => {
     await fetch("/api/orders/count")
