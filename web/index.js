@@ -142,7 +142,7 @@ app.get("/api/addProducts", async (_req, res) => {
   }
 });
 
-app.get("/api/updateCatlock", async (_req, res) => {
+app.get("/api/updateCatlog", async (_req, res) => {
   debugger;
   try {
     const productDataAll = await shopify.api.rest.Product.all({

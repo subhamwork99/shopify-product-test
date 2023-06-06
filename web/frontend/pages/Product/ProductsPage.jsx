@@ -104,8 +104,8 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
     []
   );
 
-    const updateCatLock = async()=>{
-    await fetch("/api/updateCatlock").then((res)=>{
+    const updateCatlog = async()=>{
+    await fetch("/api/updateCatlog").then((res)=>{
       getData();
     })
     }
@@ -151,8 +151,8 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
         <Text as="h1" id="page-title">
           Products
         </Text>
-      <Button onClick={updateCatLock}>
-        Update CatLock
+      <Button onClick={updateCatlog}>
+        Update Catlog
       </Button>
         </div>
         {/* <div
