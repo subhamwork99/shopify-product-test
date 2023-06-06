@@ -33,8 +33,8 @@ const Product = Mongoose.model("products", productSchema);
 const shopSchema = new Mongoose.Schema({title: { type: String }}, { strict: false });
 const ShopDb = Mongoose.model("shop", shopSchema);
 
-// const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
-const PORT = 8081;
+const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
+// const PORT = 8081;
 // console.log("PORT", PORT);
 
 
@@ -107,37 +107,49 @@ app.get("/api/addProducts", async (_req, res) => {
     const productDataAll = await shopify.api.rest.Product.all({
       session: res.locals.shopify.session,
     });
-    
+
     shopify.api.rest.Shop.all({
       session: res.locals.shopify.session,
-    }).then(async(shopData)=>{
-      await ShopDb.insertMany(shopData);
-
-    const newObject = await Promise.all(productDataAll.data.map(async (product) => {
-      const relatedProduct = [];
-      for (const subProduct of productDataAll.data) {
-        if (relatedProduct.length === 5) {
-          break; // Break the loop if 5 related products are already added
-        }
-        
-        if (subProduct.title !== product.title) {
-          relatedProduct.push(subProduct);
-        }
-      }
-      return { related_product: relatedProduct,
-         shop_name : shopData?.data[0].myshopify_domain
-         , ...product };
-      })
-      );
-      const insertResponse = await Product.insertMany(newObject);
-      res.status(200).send(insertResponse);
-    }).catch((error)=>{
-      res.status(500).send(error);
     })
+      .then(async (shopData) => {
+        await ShopDb.insertMany(shopData.data[0]);
+
+        const newObject = await Promise.all(
+          productDataAll.data.map(async (product) => {
+            const relatedProduct = [];
+            for (const subProduct of productDataAll.data) {
+              if (relatedProduct.length === 5) {
+                break; // Break the loop if 5 related products are already added
+              }
+
+              if (subProduct.title !== product.title) {
+                relatedProduct.push({
+                  ...subProduct,
+                  shop_name: shopData?.data[0].myshopify_domain,
+                  product_url: `https://${encodeURIComponent(shopData?.data[0].myshopify_domain)}/products/${encodeURIComponent(subProduct.handle)}`,
+                });
+              }
+            }
+            return {
+              related_product: relatedProduct,
+              shop_name: shopData?.data[0].myshopify_domain,
+              product_url: `${shopData?.data[0].myshopify_domain}/products/${product.title}`,
+              ...product,
+            };
+          })
+        );
+
+        const insertResponse = await Product.insertMany(newObject);
+        res.status(200).send(insertResponse);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
   } catch (error) {
     res.status(500).send(error);
   }
 });
+
 
 app.get("/api/updateCatlog", async (_req, res) => {
   debugger;
@@ -280,12 +292,18 @@ app.get("/api/add-related-theme", async (_req, res) => {
 })
 
 app.get("/related-product", async (_req, res) => {
-  if (_req.query && _req.query.productName) {
+  if (_req.query && _req.query.productName &&   _req.query.currentURL) {
     // let query = {
     //   title: { $ne: _req.query.productName }
     // }
     try {
-  const productDataAll = await Product.aggregate([{ $match: {title:_req.query.productName} }]);
+      
+  let productDataAll = await Product.aggregate([{ $match: {product_url :_req.query.currentURL} }])
+      
+  if(productDataAll.length == 0){
+    productDataAll = await Product.aggregate([{ $match: {title:_req.query.productName} }]);
+    console.log("use Name");
+  }
       res.status(200).send(productDataAll[0].related_product);
     } catch (error) {
       res.status(500).send({ message: error.message });
@@ -299,6 +317,7 @@ app.get("/related-product", async (_req, res) => {
     }
   }
 });
+
 app.get("/api/get-theme-id", (_req, res) => {
 shopify.api.rest.Shop.all({
     session: res.locals.shopify.session,

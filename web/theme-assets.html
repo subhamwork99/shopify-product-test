@@ -46,7 +46,7 @@
       function buildBlock(product) {
         const formattedPrice = formatMoney(product?.variants[0]?.price, "{{ shop.money_format }}")
         // console.log("buildBlock", product)
-        const html =`<a class="related-product" href="${product?.url}">
+       const html =`<a class="related-product" href="${product?.product_url}" >
     <img src="${product?.images[0]?.src}" />
     <h3>${product?.title}</h3>
     <span>${formattedPrice}</span>
@@ -58,19 +58,29 @@
         return html
       }
         function getData(){
-          let productName = document.getElementsByClassName("h1")[0].textContent.trim()
-          fetch(`https://shopify-product-test-2.onrender.com/related-product/?productName=${productName}`)
-            .then(response => response.json())
-            .then(products => {
-              // console.log("products", products)
-              products && products.forEach(product => {
-                const html = buildBlock(product)
-                document.querySelector('.related-products').innerHTML += html
-              })
-            })
+          const productName = document.getElementsByClassName("h1")[0].textContent.trim()
+          const currentURL = window.location.href;
+
+fetch(`https://shopify-product-test-2.onrender.com/related-product/?productName=${encodeURIComponent(productName)}&currentURL=${currentURL}`)
+  .then(response => response.json())
+  .then(products => {
+    // console.log("products", products)
+    products && products.forEach(product => {
+      const html = buildBlock(product)
+      document.querySelector('.related-products').innerHTML += html
+    })
+  });
         }        
         getData();
-
+document.addEventListener('click', (event) => {
+  const targetElement = event.target;
+  if (targetElement.classList.contains('related-product')) {
+    event.preventDefault(); // Prevent the default link behavior
+    const productUrl = targetElement.href;
+    const modifiedProductUrl = productUrl.replace(/\/products\//, '/');
+    window.location.href = modifiedProductUrl; // Redirect to the modified product_url
+  }
+});
 
 </script>
 <style>
@@ -145,4 +155,4 @@
           }
         ]
       }
-      {% endschema %}
+      {% endschema %} 
