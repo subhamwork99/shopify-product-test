@@ -33,9 +33,9 @@ const Product = Mongoose.model("products", productSchema);
 const shopSchema = new Mongoose.Schema({title: { type: String }}, { strict: false });
 const ShopDb = Mongoose.model("shop", shopSchema);
 
-const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
-// const PORT = 8081;
-// console.log("PORT", PORT);
+// const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
+const PORT = 8081;
+console.log("PORT", PORT);
 
 
 const STATIC_PATH =
