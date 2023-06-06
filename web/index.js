@@ -133,7 +133,7 @@ app.get("/api/addProducts", async (_req, res) => {
             return {
               related_product: relatedProduct,
               shop_name: shopData?.data[0].myshopify_domain,
-              product_url: `${shopData?.data[0].myshopify_domain}/products/${product.title}`,
+              product_url: `https://${encodeURIComponent(shopData?.data[0].myshopify_domain)}/products/${encodeURIComponent(product.handle)}`,
               ...product,
             };
           })
@@ -172,13 +172,20 @@ app.get("/api/updateCatlog", async (_req, res) => {
               }
 
               if (subProduct.title !== product.title) {
-                relatedProduct.push(subProduct);
+                relatedProduct.push({
+                  ...subProduct,
+                  shop_name: shopData?.data[0].myshopify_domain,
+                  product_url: `https://${encodeURIComponent(shopData?.data[0].myshopify_domain)}/products/${encodeURIComponent(subProduct.handle)}`,
+                });
               }
             }
 
-            return { related_product: relatedProduct,
-              shop_name : shopData?.data[0].myshopify_domain
-              , ...product };
+            return { 
+              related_product: relatedProduct,
+              shop_name : shopData?.data[0].myshopify_domain,
+              product_url: `https://${encodeURIComponent(shopData?.data[0].myshopify_domain)}/products/${encodeURIComponent(product.handle)}`,
+              ...product 
+            }
            })
         );
         
@@ -291,19 +298,18 @@ app.get("/api/add-related-theme", async (_req, res) => {
 })
 
 app.get("/related-product", async (_req, res) => {
-  if (_req.query && _req.query.productName &&   _req.query.currentURL) {
-    // let query = {
-    //   title: { $ne: _req.query.productName }
-    // }
+  console.log("_req.query.currentURL", _req.query.currentURL);
+  console.log("_req.query.productName", _req.query.productName);
+  if (_req.query && _req.query.productName && _req.query.currentURL) {    
     try {
-  let productDataAll = await Product.aggregate([{ $match: {product_url :_req.query.currentURL} }])
-      
-  if(productDataAll.length == 0){
-    productDataAll = await Product.aggregate([{ $match: {title:_req.query.productName} }]);
-    console.log("use Name");
-  }else{
-    console.log("use Url");
-  }
+      let productDataAll = await Product.aggregate([{ $match: { product_url: _req.query.currentURL } }])
+      console.log("productDataAll", productDataAll);    
+      if (productDataAll.length === 0) {
+        productDataAll = await Product.aggregate([{ $match: { title: _req.query.productName } }]);
+        console.log("use Name");
+      } else {
+        console.log("use Url");
+      }
       res.status(200).send(productDataAll[0].related_product);
     } catch (error) {
       res.status(500).send({ message: error.message });
