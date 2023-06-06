@@ -108,9 +108,6 @@ app.get("/api/addProducts", async (_req, res) => {
       session: res.locals.shopify.session,
     });
     
-    await Product.deleteMany({});
-    await ShopDb.deleteMany({});
-    
     shopify.api.rest.Shop.all({
       session: res.locals.shopify.session,
     }).then(async(shopData)=>{
