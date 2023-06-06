@@ -150,7 +150,6 @@ app.get("/api/addProducts", async (_req, res) => {
   }
 });
 
-
 app.get("/api/updateCatlog", async (_req, res) => {
   debugger;
   try {
@@ -297,12 +296,13 @@ app.get("/related-product", async (_req, res) => {
     //   title: { $ne: _req.query.productName }
     // }
     try {
-      
   let productDataAll = await Product.aggregate([{ $match: {product_url :_req.query.currentURL} }])
       
   if(productDataAll.length == 0){
     productDataAll = await Product.aggregate([{ $match: {title:_req.query.productName} }]);
     console.log("use Name");
+  }else{
+    console.log("use Url");
   }
       res.status(200).send(productDataAll[0].related_product);
     } catch (error) {
@@ -317,7 +317,6 @@ app.get("/related-product", async (_req, res) => {
     }
   }
 });
-
 app.get("/api/get-theme-id", (_req, res) => {
 shopify.api.rest.Shop.all({
     session: res.locals.shopify.session,

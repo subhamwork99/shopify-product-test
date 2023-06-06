@@ -30,10 +30,10 @@ export default function App() {
                 //   label: "Order",
                 //   destination: "/order",
                 // },
-                {
-                  label: "Products",
-                  destination: "/products",
-                },
+                // {
+                //   label: "Products",
+                //   destination: "/Product",
+                // },
               ]}
             />
             <Routes pages={pages} />

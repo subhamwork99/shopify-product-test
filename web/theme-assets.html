@@ -60,27 +60,17 @@
         function getData(){
           const productName = document.getElementsByClassName("h1")[0].textContent.trim()
           const currentURL = window.location.href;
-
-fetch(`https://shopify-product-test-2.onrender.com/related-product/?productName=${encodeURIComponent(productName)}&currentURL=${currentURL}`)
-  .then(response => response.json())
-  .then(products => {
-    // console.log("products", products)
-    products && products.forEach(product => {
-      const html = buildBlock(product)
-      document.querySelector('.related-products').innerHTML += html
-    })
-  });
+          fetch(`https://shopify-product-test-2.onrender.com/related-product/?productName=${encodeURIComponent(productName)}&currentURL=${currentURL}`)
+            .then(response => response.json())
+            .then(products => {
+              // console.log("products", products)
+              products && products.forEach(product => {
+                const html = buildBlock(product)
+                document.querySelector('.related-products').innerHTML += html
+              })
+            })
         }        
         getData();
-document.addEventListener('click', (event) => {
-  const targetElement = event.target;
-  if (targetElement.classList.contains('related-product')) {
-    event.preventDefault(); // Prevent the default link behavior
-    const productUrl = targetElement.href;
-    const modifiedProductUrl = productUrl.replace(/\/products\//, '/');
-    window.location.href = modifiedProductUrl; // Redirect to the modified product_url
-  }
-});
 
 </script>
 <style>
@@ -155,4 +145,4 @@ document.addEventListener('click', (event) => {
           }
         ]
       }
-      {% endschema %} 
+      {% endschema %}
