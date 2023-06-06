@@ -44,14 +44,14 @@
     return formatString.replace(placeholderRegex, value);
   };
       function buildBlock(product) {
-        const formattedPrice = formatMoney(product.variants[0].price, "{{ shop.money_format }}")
+        const formattedPrice = formatMoney(product?.variants[0]?.price, "{{ shop.money_format }}")
         // console.log("buildBlock", product)
-        const html =`<a class="related-product" href="${product.url}">
-    <img src="${product.images[0].src}" />
-    <h3>${product.title}</h3>
+        const html =`<a class="related-product" href="${product?.url}">
+    <img src="${product?.images[0]?.src}" />
+    <h3>${product?.title}</h3>
     <span>${formattedPrice}</span>
     <form method="post" action="/cart/add">
-      <input name="id" type="hidden" value="${product.variants[0].id}" />
+      <input name="id" type="hidden" value="${product?.variants[0]?.id}" />
       <button type="submit">Add to cart</button>
     </form>
   </a>` 
