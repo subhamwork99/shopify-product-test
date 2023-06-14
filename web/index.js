@@ -406,11 +406,13 @@ shopify.api.rest.Shop.all({
 // });
 
 app.get("/theme-data-status", async (_req, res) => {
+  console.log("_req.query.currentURL",_req?.query?.currentURL);
   if (_req.query && _req.query.currentURL) {
     const domainName =new URL(_req.query.currentURL).hostname;
   try {
-    let productDataAll = await ShopDb.aggregate([{ $match: { domain: domainName } }])
-    res.status(200).send({ themeValueStatus: productDataAll[0]?.releted_product_theme});
+    let shopData = await ShopDb.aggregate([{ $match: { domain: domainName } }])
+    console.log("shopData",shopData);
+    res.status(200).send({ themeValueStatus: shopData[0]?.releted_product_theme});
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
