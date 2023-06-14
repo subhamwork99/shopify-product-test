@@ -31,7 +31,7 @@ const Product = Mongoose.model("products", productSchema);
 
 //Order Schema
 const shopSchema = new Mongoose.Schema({title: { type: String }}, { strict: false });
-const ShopDb = Mongoose.model("shop", shopSchema);
+const ShopDb = Mongoose.model("shops", shopSchema);
 
 // const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 const PORT = 8081;
@@ -112,7 +112,8 @@ app.get("/api/addProducts", async (_req, res) => {
       session: res.locals.shopify.session,
     })
       .then(async (shopData) => {
-        await ShopDb.insertMany(shopData.data[0]);
+
+        await ShopDb.insertMany({...shopData.data[0],releted_product_theme : false});
 
         const newObject = await Promise.all(
           productDataAll.data.map(async (product) => {
@@ -248,11 +249,32 @@ app.get("/api/add-related-theme", async (_req, res) => {
 
   let recommendationsChange = _req.query.recommendationsChange
 
-  fs.readFile('./theme-assets.html', 'utf8', function (err, HtmlData) {
+  fs.readFile('../extensions/theme-extension/blocks/star_rating.liquid', 'utf8', function (err, HtmlData) {
+    const updatedData = HtmlData.replace(
+    /{% schema %}[\s\S]*?{% endschema %}/,
+    `{% schema %}
+      {
+        "name": "Related products",
+        "settings": [
+          {
+            "type": "text",
+            "label": "Heading",
+            "id": "heading",
+            "default": "You may also like"
+          }
+        ],
+        "presets": [
+          {
+            "name": "Related products"
+          }
+        ]
+      }
+    {% endschema %}`
+    );
     const data = {
       asset: {
         key: `${process.env.RELATED_PRODUCTS}`,
-        value: (recommendationsChange === 'true') ? ` ${HtmlData} ` : null
+        value: (recommendationsChange === 'true') ? ` ${updatedData} ` : null
       }
     };
     shopify.api.rest.Shop.all({
@@ -263,6 +285,8 @@ app.get("/api/add-related-theme", async (_req, res) => {
           const themes = themesResponse.data;
     
           let currentThemeId;
+          console.log("res.locals.shopify.session.accessToken",res.locals.shopify.session.accessToken);
+
           themes.forEach((theme) => {
             if (theme.role === 'main' || theme.role === 'published') {
               currentThemeId = theme.id;
@@ -350,37 +374,51 @@ shopify.api.rest.Shop.all({
 
 
 
-app.get("/api/theme-data-status", async (_req, res) => {
-  shopify.api.rest.Theme.all({ session: res.locals.shopify.session })
-    .then(async (themesResponse) => {
-      const themes = themesResponse.data;
+// app.get("/theme-data-status", async (_req, res) => {
+//   shopify.api.rest.Theme.all({ session: res.locals.shopify.session })
+//     .then(async (themesResponse) => {
+//       const themes = themesResponse.data;
 
-      let currentThemeId;
-      themes.forEach((theme) => {
-        if (theme.role === "main" || theme.role === "published") {
-          currentThemeId = theme.id;
-        }
-      });
-      const themeStatus = await shopify.api.rest.Asset.all({
-        session: res.locals.shopify.session,
-        theme_id: currentThemeId,
-        asset: { key: `${process.env.RELATED_PRODUCTS}` },
-      });
-      res
-        .status(200)
-        .send({
-          themeValueStatus:
-            themeStatus?.data[0].value.length > 0 &&
-            themeStatus?.data[0].value.includes(
-              "downtown-store-related-product"
-            ),
-        });
-    })
-    .catch((error) => {
-      res.status(500).send(error);
-    });
+//       let currentThemeId;
+//       themes.forEach((theme) => {
+//         if (theme.role === "main" || theme.role === "published") {
+//           currentThemeId = theme.id;
+//         }
+//       });
+//       const themeStatus = await shopify.api.rest.Asset.all({
+//         session: res.locals.shopify.session,
+//         theme_id: currentThemeId,
+//         asset: { key: `${process.env.RELATED_PRODUCTS}` },
+//       });
+//       res
+//         .status(200)
+//         .send({
+//           themeValueStatus:
+//             themeStatus?.data[0].value.length > 0 &&
+//             themeStatus?.data[0].value.includes(
+//               "downtown-store-related-product"
+//             ),
+//         });
+//     })
+//     .catch((error) => {
+//       res.status(500).send(error);
+//     });
+// });
+
+app.get("/theme-data-status", async (_req, res) => {
+  shopify.api.rest.Shop.all({
+    session: res.locals.shopify.session,
+  })
+    .then(async (shopData) => {
+  try {
+    let productDataAll = await ShopDb.aggregate([{ $match: { domain: shopData.data[0].domain } }])
+    res.status(200).send({ themeValueStatus: productDataAll[0].releted_product_theme});
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }}).catch((error)=>{
+    res.status(500).send({ message: error.message });
+  })
 });
-
 
 app.get("/api/userinformation", async (_req, res) => {
   const ShopAllData = await shopify.api.rest.Shop.all({

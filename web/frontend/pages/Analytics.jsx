@@ -36,7 +36,7 @@ function Analytics() {
   };
 
   useEffect(async () => {
-    await fetch(`/api/theme-data-status`)
+    await fetch(`/theme-data-status`)
       .then((res) => {
         return res.json();
       })
