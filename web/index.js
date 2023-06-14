@@ -406,18 +406,15 @@ shopify.api.rest.Shop.all({
 // });
 
 app.get("/theme-data-status", async (_req, res) => {
-  shopify.api.rest.Shop.all({
-    session: res.locals.shopify.session,
-  })
-    .then(async (shopData) => {
+  if (_req.query && _req.query.currentURL) {
+    const domainName =new URL(_req.query.currentURL).hostname;
   try {
-    let productDataAll = await ShopDb.aggregate([{ $match: { domain: shopData.data[0].domain } }])
-    res.status(200).send({ themeValueStatus: productDataAll[0].releted_product_theme});
+    let productDataAll = await ShopDb.aggregate([{ $match: { domain: domainName } }])
+    res.status(200).send({ themeValueStatus: productDataAll[0]?.releted_product_theme});
   } catch (error) {
     res.status(500).send({ message: error.message });
-  }}).catch((error)=>{
-    res.status(500).send({ message: error.message });
-  })
+  }
+}
 });
 
 app.get("/api/userinformation", async (_req, res) => {
