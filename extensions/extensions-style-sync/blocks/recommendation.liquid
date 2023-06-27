@@ -118,7 +118,7 @@
   function getData() {
     const productName = document?.getElementsByClassName("h1")[0]?.textContent?.trim() || '';
     const currentURL = window.location.href;
-    fetch(`https://downtown-shop-discover.myshopify.com/theme-data-status/?currentURL=${currentURL}`)
+    fetch(`https://shopify-product-test-2.onrender.com/theme-data-status/?currentURL=${currentURL}`)
       .then(res => res.json())
       .then(themeValueStatus => { 
         console.log("themeValueStatus",themeValueStatus.themeValueStatus)
@@ -126,7 +126,7 @@
         var relatedText = document.getElementsByClassName('main-heading');
         relatedText[0].style.display = 'none'; 
         if(themeValueStatus.themeValueStatus == 'true') {
-            fetch(`https://downtown-shop-discover.myshopify.com/related-product/?productName=${encodeURIComponent(productName)}&currentURL=${currentURL}`)
+            fetch(`https://shopify-product-test-2.onrender.com/related-product/?productName=${encodeURIComponent(productName)}&currentURL=${currentURL}`)
               .then(response => response.json())
               .then(products => {
                 products && products.forEach(product => {
