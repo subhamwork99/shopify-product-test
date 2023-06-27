@@ -1,24 +1,40 @@
-import { Layout, Page, Text, Card, Spinner ,Toast} from "@shopify/polaris";
-import React, { useState, useEffect } from "react";
+import { Layout, Page, Text, Card, Spinner ,Toast, Icon ,Modal, TextContainer, Image} from "@shopify/polaris";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAppQuery, useAuthenticatedFetch } from "../../hooks";
-
+import windowImage from "../../image/window-element.png"; 
+import "./index.css"
+import mobile from "../../image/mobile.png";
+import desktop from "../../image/desktop.png"
 function Widgets() {
   const [analytics, setAnalytics] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [toastContent, setToastContent] = useState({});
+  const [active, setActive] = useState(false);
+  const isMobileView = window.innerWidth <= 767;
+  const handleChangePopup = useCallback(() => setActive(!active), [active]);
   const fetch = useAuthenticatedFetch();
 
   const handleChange = async (value) => {
     console.log("value", value.target.checked);
-    console.log("analytics", analytics);
-    setAnalytics(value.target.checked);
+    console.log("analytics == 'true'",analytics == "true");
     await fetch(
       `/api/add-related-theme/?recommendationsChange=${value.target.checked}`
     )
-      .then((res) => {
+      .then(async(res) => {
         if (res.ok) {
           setToastContent({ content: "API Success", error: false });
+          await fetch(`/api/theme-data-status-checkBox`)
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setAnalytics(data.themeValueStatus);
+      })
+      .catch((err) => {
+        setToastContent({ content: "API Error", error: true });
+        setShowToast(true);
+      });
         } else {
           setToastContent({ content: "API Error", error: true });
         }
@@ -31,7 +47,7 @@ function Widgets() {
   };
 
   useEffect(async () => {
-    await fetch(`/theme-data-status`)
+    await fetch(`/api/theme-data-status-checkBox`)
       .then((res) => {
         return res.json();
       })
@@ -71,7 +87,7 @@ function Widgets() {
                           <input
                             type="checkbox"
                             id="check-1"
-                            checked={analytics}
+                            checked={analytics == "true"}
                             onChange={handleChange}
                           />
                           <label htmlFor="check-1" />
@@ -81,10 +97,17 @@ function Widgets() {
                   </div>
                 </Card.Section>
                 <Card.Section>
-                  <Text id="recommendation-text">
-                  Discover related products and make informed purchasing decisions with personalized recommendations.
-                  </Text>
-                </Card.Section>
+                    <Text id="recommendation-text">
+                    Discover related products and make informed purchasing decisions with personalized recommendations.
+                    </Text>
+                  {analytics == "true" ?
+                <div className="preview-text" onClick={handleChangePopup} >
+                  <span>
+              preview 
+                  </span>
+                </div>
+              :null}
+                  </Card.Section>
               </Card>
             </div>
           </Layout.Section>
@@ -98,6 +121,22 @@ function Widgets() {
               />
             )}
     </Page>
+    <Modal 
+        open={active}
+        onClose={handleChangePopup}
+        title="PREVIEW"
+        id="page-title"
+      >
+        <Modal.Section>
+          <div className="popUp-img">
+          {isMobileView ? (
+        <Image source={mobile} />
+      ) : (
+        <Image source={desktop} />
+      )}
+          </div>
+        </Modal.Section>
+      </Modal>
     </div>
   );
 }

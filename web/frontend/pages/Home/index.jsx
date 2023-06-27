@@ -11,17 +11,23 @@ import {
   List,
   Checkbox,
   Toast,
+  Modal,
+  Icon,
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 
 import { trophyImage } from "../../assets";
-
+import {
+  ViewMajor
+} from '@shopify/polaris-icons';
 import { ProductsCard } from "../../components";
 import "./index.css";
 import { useAppQuery } from "../../hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useCallback} from "react";
 import { useAuthenticatedFetch } from "../../hooks";
 import windowImage from "../../image/window-element.png";
+import mobile from "../../image/mobile.png";
+import desktop from "../../image/desktop.png"
 import { Cart } from "@shopify/app-bridge/actions";
 import widgetsimg from "../../image/widgetsimg.png";
 export default function Home() {
@@ -35,7 +41,10 @@ export default function Home() {
   const [analytics, setAnalytics] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastContent, setToastContent] = useState({});
-
+  const [active, setActive] = useState(false);
+  const isMobileView = window.innerWidth <= 767;
+  console.log("isMobileView",isMobileView);
+  const handleChangePopup = useCallback(() => setActive(!active), [active]);
   useEffect(() => {
     handleProductsCount();
     handleShopData();
@@ -117,7 +126,7 @@ export default function Home() {
 
   useEffect(async () => {
     setIsWidgetsLoading(true);
-    await fetch(`/theme-data-status`)
+    await fetch(`/api/theme-data-status-checkBox`)
       .then((res) => {
         return res.json();
       })
@@ -131,7 +140,7 @@ export default function Home() {
 
     setIsWidgetsLoading(false);
   }, []);
-  console.log(analytics);
+
   return (
     <div className="homeWrapper">
       <Page fullWidth>
@@ -208,7 +217,7 @@ export default function Home() {
                 size="large"
                 hasFocusableParent={isWidgetsLoading}
               />
-            ) : analytics ? (
+            ) : (analytics == "true") ? (
               <div className="card-grid">
                 <Card>
                   <Card.Section>
@@ -220,7 +229,7 @@ export default function Home() {
                             <input
                               type="checkbox"
                               id="check-1"
-                              checked={analytics}
+                              checked={analytics == "true"}
                               onChange={handleChange}
                             />
                             <label htmlFor="check-1" />
@@ -233,6 +242,13 @@ export default function Home() {
                     <Text id="recommendation-text">
                     Discover related products and make informed purchasing decisions with personalized recommendations.
                     </Text>
+                  {analytics == "true" ?
+                <div className="preview-text" onClick={handleChangePopup} >
+                  <span>
+              preview 
+                  </span>
+                </div>
+              :null}
                   </Card.Section>
                 </Card>
               </div>
@@ -262,6 +278,22 @@ export default function Home() {
           onDismiss={() => setShowToast(false)}
         />
       )}
+          <Modal 
+        open={active}
+        onClose={handleChangePopup}
+        title="PREVIEW"
+        id="page-title"
+      >
+        <Modal.Section>
+          <div className="popUp-img">
+          {isMobileView ? (
+        <Image source={mobile} />
+      ) : (
+        <Image source={desktop} />
+      )}
+          </div>
+        </Modal.Section>
+      </Modal>
     </div>
   );
 }

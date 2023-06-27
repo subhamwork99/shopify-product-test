@@ -14,9 +14,13 @@ import {
   Text,
   Tabs,
   IndexFilters,
+  Tooltip,
 } from "@shopify/polaris";
+import { Icon } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../../hooks";
-
+import {
+  CircleInformationMajor
+} from '@shopify/polaris-icons';
 function ProductsPage({setSelectedProducts , selectedProducts}) {
   console.log("selectedProducts",selectedProducts);
   const fetch = useAuthenticatedFetch();
@@ -24,8 +28,8 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
   const [productData, setProductData] = useState([]);
   // const [relatedProducts, setRelatedProducts] = useState([]);
   const [tableLoader, setTableLoader] = useState(true);
+  const [isOptimizing,setIsOptimizing] = useState(false);
   const [selected, setSelected] = useState(0);
-
   const resourceName = {
     singular: "order",
     plural: "orders",
@@ -58,14 +62,15 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
       .then((data) => {
         if (data && Array.isArray(data.products)) {
           const newObject = {
-            products: data.products.map((product) => {
+            products: data?.products?.map((product) => {
               const { _id, ...rest } = product;
               return { id: _id, ...rest };
             }),
-            productCount: data.productCount, 
+            productCount: data?.productCount, 
           };
           setProductData(newObject);
           setTableLoader(false);
+          setIsOptimizing(data?.shop_optimization)
           // getRelatedProducts();
         } else {
           console.error('Invalid data format:', data);
@@ -76,17 +81,45 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
         setTableLoader(false);
       });
     };
-    const rows = productData?.products?.map(
-    ({ title, status, vendor, images }) => {
+    const rows = productData?.products?.map((value) => {
       return [
-        <div>
-          <Thumbnail source={images[0]?.src} alt={title} />
-        </div>,
-        title,
-        status,
-      ];
-    }
-  );
+        <div className="related-product-row">
+        <div className="table-row" onClick={()=>{setSelectedProducts(value)}}>
+        <td className="row-cell-1" >
+        <Thumbnail source={value?.images[0]?.src} alt={value?.title} />
+         </td>
+           <td className="row-cell-2">{value?.title}</td>
+            <td id="related-flex" className="row-cell-3">
+        { value?.related_product?.map((product) => (
+        <td key={product?.images[0]?.id} >
+          <Thumbnail
+            source={product?.images[0]?.src}
+            alt={product?.title}
+            style={{ width: "50px", height: "auto", marginRight: "10px" }}
+          />
+        </td>
+      ))}
+    </td>
+            {
+              isOptimizing ?
+              <div className="optimization">
+                <td className="optimizing-td">
+                  optimizing
+                </td>
+                <td  className="viewMajor">
+                    <Tooltip content="Our system is generating intelligence for similar products. Once it's ready this flag will go-away.">
+                      <Icon source={CircleInformationMajor} color="base" />
+                    </Tooltip>
+                </td>
+                </div>
+                : null
+            }
+        </div>
+        </div>
+  ];
+});
+
+
   const AddProduct = async () => {
     setTableLoader(true);
     await fetch("/api/addProducts");
@@ -105,6 +138,7 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
   );
 
     const updateCatlog = async()=>{
+    setTableLoader(true);
     await fetch("/api/updateCatlog").then((res)=>{
       getData();
     })
@@ -113,30 +147,30 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
   const rowMarkup = productData?.products?.map(
     (value, index) => (
       <IndexTable.Row
-        id={value.id}
-        key={value.id}
-        selected={selectedResources.includes(value.id)}
+        id={value?.id}
+        key={value?.id}
+        selected={selectedResources?.includes(value?.id)}
         position={index}
         onClick={()=>{setSelectedProducts(value)}}
       >
         <IndexTable.Cell>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Image
-              alt={value.title}
-              source={value.images[0]?.src}
+              alt={value?.title}
+              source={value?.images[0]?.src}
               style={{ width: "50px", height: "auto" }}
             />
           </div>
         </IndexTable.Cell>
         <IndexTable.Cell className="title-cell">
-          <span>{value.title}</span>
+          <span>{value?.title}</span>
         </IndexTable.Cell>
         <IndexTable.Cell>
           {value?.related_product?.map((products) => (
             <Image
-              key={products.images[0]?.id}
-              alt={products.title}
-              source={products.images[0]?.src}
+              key={products?.images[0]?.id}
+              alt={products?.title}
+              source={products?.images[0]?.src}
               style={{ width: "50px", height: "auto", marginRight: "10px" }}
             />
           ))}
@@ -151,9 +185,11 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
         <Text as="h1" id="page-title">
           Products
         </Text>
+        <div className="update-catlog"> 
       <Button onClick={updateCatlog}>
         Update Catlog
       </Button>
+        </div>
         </div>
         {/* <div
         style={{ display: "flex", justifyContent: "end", marginBottom: "1rem" }}
@@ -163,7 +199,7 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
         <div className="tableWrapper">
           <LegacyCard>
             {/* <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}> */}
-            <IndexFilters className="custom-index-filter" tabs={tabs} />
+            {/* <IndexFilters className="custom-index-filter" tabs={tabs} />   */}
             {tableLoader ? (
               <div
                 style={{
@@ -188,12 +224,22 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
               // selected ==0 ?
 
               <>
-                {/* <DataTable
-          columnContentTypes={["Image", "text", "text", "text"]}
-          headings={["Image", "Title", "status", "vendor"]}
-          rows={rows}
-        /> */}
-                <IndexTable
+                <DataTable
+                  columnContentTypes={[ "", "Product", "Recommended products"]}
+                  headings={[<div className="table-row">
+                    <div className="row-cell-1">
+                      
+                    </div>
+                    <div className="row-cell-2">
+                    Product
+                    </div>
+                    <div className="row-cell-3">
+                    Recommended products
+                    </div>
+                  </div>]}
+                  rows={rows}
+               ></DataTable>
+                {/* <IndexTable
                   resourceName={resourceName}
                   itemCount={productData?.products?.length}
                   selectedItemsCount={
@@ -207,7 +253,7 @@ function ProductsPage({setSelectedProducts , selectedProducts}) {
                   ]}
                 >
                   {rowMarkup}
-                </IndexTable>
+                </IndexTable> */}
               </>
 
               // : selected ==1 ?

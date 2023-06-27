@@ -246,3 +246,46 @@
     width: 100%;
   }
 }
+
+.preview-text{
+  padding-top: 1rem;
+    color: #504e54;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.preview-text span{
+  border-bottom: 1px solid #504e54;
+}
+
+
+
+
+/* model */
+
+.Polaris-Modal-Dialog{
+    height: 94vh;
+    width: 100%;
+}
+.Polaris-Modal-Dialog .Polaris-Modal-Dialog--sizeLarge{
+  height: 100%;
+  width: 100%;
+  max-width: 97%;
+}
+@media only screen and (max-width: 998px) {
+  .Polaris-Modal-Dialog .Polaris-Modal-Dialog--sizeLarge{
+    max-width: unset;
+  }
+}
+
+
+.Polaris-Modal-Dialog .Polaris-Modal-Section{
+  height: 100%;
+  width: 100%;
+}
+
+.Polaris-Modal-Dialog .Polaris-Modal-Section section{
+  height: 100%;
+  width: 100%;
+}

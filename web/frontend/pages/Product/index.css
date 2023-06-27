@@ -87,16 +87,77 @@
 .div-flex #page-title{
   margin-bottom: 0;
 }
+.related-product-row{
+display: flex;
+width: 100%;
+align-items: center;
+}
+
+#related-flex{
+  display: flex;
+  gap: 15px;
+}
 
 
-
+  .table-row{
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    align-items: center;
+  }
+  .row-cell-1{
+    width: 20%;
+    min-width: 80px;
+    align-items: center;
+    display: flex;
+  }
+  .row-cell-2{
+    width: 30%;
+    min-width: 120px;
+    align-items: center;
+    display: flex;
+  }
+  .row-cell-3{
+    width: 50%;
+    min-width: 400px;
+  }
   
+  .optimization {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .optimizing-td {
+    background: #a1edd0;
+    border-radius: 23px;
+    padding: 2px 7px;
+  }
+  
+  .tableWrapper .Polaris-DataTable__Cell {
+    cursor: pointer;
+  }
+
+
+.related-product-Wrapper .Polaris-DataTable__Cell{
+  cursor: pointer ;
+}
+
+.update-catlog .Polaris-Button::after{
+  position: unset;
+}
 
 
 
+.viewMajor .Polaris-Icon--colorBase:hover svg {
+  fill: #2C6ECB;
+}
 
-
-
+#view-major-text {
+  font-weight: 500;
+  color: #5B6A60;
+  font-size: 16px;
+}
 
 
 

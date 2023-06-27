@@ -1,3 +1,16 @@
+.popUp-img{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popUp-img img{
+  height: 100%;
+  width: 100%;
+}
+
 @media only screen and (max-width: 489px) {
     .widgetsWrapper .Polaris-Page {
       padding: 0 1rem !important;

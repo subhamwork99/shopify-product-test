@@ -18,22 +18,22 @@ function SelectedProduct({ setSelectedProducts, selectedProducts }) {
     setSelectedProducts({});
   };
   
-  const rows = selectedProducts.related_product?.map(
+  const rows = selectedProducts?.related_product?.map(
     (value,index) => {
       return [
         `${index +1}`,
         <div>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Image
-              alt={value.title}
-              source={value.images[0]?.src}
+              alt={value?.title}
+              source={value?.images[0]?.src}
               style={{ width: "50px", height: "auto" }}
             />
           </div>
         </div>,
         <div>
-          <div style={{color:'#2C6ECB'}}>{value.title}</div>
-          <div>&#8377;{value.variants[0]?.price}</div>
+          <div style={{color:'#2C6ECB'}}>{value?.title}</div>
+          <div>&#8377;{value?.variants[0]?.price}</div>
         </div>
       ];
     })
@@ -48,7 +48,7 @@ function SelectedProduct({ setSelectedProducts, selectedProducts }) {
         <div className="Selected-product-img">
           <Card>
             <Image
-              source={selectedProducts?.images[0].src}
+              source={selectedProducts?.images[0]?.src}
               style={{ width: "100%", height: "100%" }}
             />
           </Card>
@@ -62,7 +62,7 @@ function SelectedProduct({ setSelectedProducts, selectedProducts }) {
               Id: <span>{selectedProducts?.id}</span>
             </Text>
             <Text>
-              Price: <span>{selectedProducts?.variants[0].price}</span>
+              Price: <span>{selectedProducts?.variants[0]?.price}</span>
             </Text>
             <Text>
               Product Type: <span>{selectedProducts?.product_type}</span>
