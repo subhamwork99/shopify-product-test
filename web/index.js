@@ -505,6 +505,7 @@ function verifyWebhook(payload, hmac) {
 }
 
 
+
 app.get("/theme-data-status", async (_req, res) => {
   console.log("_req.query.currentURL",_req?.query?.currentURL);
   if (_req.query && _req.query.currentURL) {
@@ -512,7 +513,7 @@ app.get("/theme-data-status", async (_req, res) => {
   try {
     let shopData = await ShopDb.aggregate([{ $match: { domain: domainName } }])
     console.log("shopData",shopData);
-    res.status(200).send({ themeValueStatus: shopData[0]?.releted_product_theme});
+    res.status(200).send({ themeValueStatus: shopData[0]?.releted_product_theme , money_format : shopData[0]?.money_format});
   } catch (error) {
     res.status(500).send({ message: error?.message });
   }
