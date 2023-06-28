@@ -513,7 +513,7 @@ app.get("/theme-data-status", async (_req, res) => {
   try {
     let shopData = await ShopDb.aggregate([{ $match: { domain: domainName } }])
     console.log("shopData",shopData);
-    res.status(200).send({ themeValueStatus: shopData[0]?.releted_product_theme , money_format : shopData[0]?.money_format});
+    res.status(200).send({ themeValueStatus: shopData[0]?.releted_product_theme , money_format : `${shopData[0]?.money_format.replace(/\..*$/, '')}.`});
   } catch (error) {
     res.status(500).send({ message: error?.message });
   }
